@@ -2,7 +2,12 @@ import requests
 
 from .token_manager import get_access_token
 
-BASE_URL = "http://127.0.0.1:8000"
+import os
+
+BASE_URL = os.environ.get(
+    "API_BASE_URL",
+    "http://127.0.0.1:8000"
+)
 
 def get_dashboard_property(id, username):
 

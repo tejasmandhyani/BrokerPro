@@ -3,7 +3,12 @@ import os
 from datetime import datetime
 import requests
 
-BASE_URL = "http://127.0.0.1:8000"
+import os
+
+BASE_URL = os.environ.get(
+    "API_BASE_URL",
+    "http://127.0.0.1:8000"
+)
 
 
 

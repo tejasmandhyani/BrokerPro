@@ -2,8 +2,12 @@ import json
 import os
 from datetime import datetime
 import requests
+import os
 
-BASE_URL = "http://127.0.0.1:8000"
+BASE_URL = os.environ.get(
+    "API_BASE_URL",
+    "http://127.0.0.1:8000"
+)
 
 USERNAME = "brokerpro_service"
 PASSWORD = "BrokerPro@Service2026"
