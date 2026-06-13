@@ -1,0 +1,128 @@
+{% extends 'base.html' %}
+
+{% block title %}
+About Us
+{% endblock %}
+
+{% block content %}
+
+<style>
+
+.broker-card{
+    transition:0.3s;
+    border-radius:20px;
+}
+
+.broker-card:hover{
+    transform:translateY(-8px);
+}
+
+.broker-card img{
+    box-shadow:0 8px 25px rgba(0,0,0,0.15);
+}
+
+.about-header{
+    padding:60px 0 20px 0;
+}
+
+</style>
+
+<section class="container">
+
+    <div class="text-center about-header">
+
+        <h1 class="fw-bold display-5">
+
+            Meet Our Brokers
+
+        </h1>
+
+        <p class="text-muted fs-5">
+
+            Experienced real estate professionals helping you find your dream property.
+
+        </p>
+
+    </div>
+
+    <div class="row justify-content-center">
+
+        {% for broker in brokers %}
+
+        <div class="col-lg-5 col-md-6 mb-4">
+
+            <div class="card shadow border-0 h-100 broker-card">
+
+                <div class="card-body text-center p-4">
+
+                    <img src="{{ broker.photo }}"
+                         class="rounded-circle mb-4"
+                         style="
+                         width:140px;
+                         height:140px;
+                         object-fit:cover;
+                         border:4px solid #0d3b6e;">
+
+                    <h3 class="fw-bold">
+
+                        {{ broker.name }}
+
+                    </h3>
+
+                    <p class="text-muted">
+
+                        Senior Property Consultant
+
+                    </p>
+
+                    <span class="badge bg-primary px-3 py-2 mb-3">
+
+                        {{ broker.experience }} Years Experience
+
+                    </span>
+
+                    <p class="text-muted mt-3">
+
+                        {{ broker.about }}
+
+                    </p>
+
+                    <hr>
+
+                    <p class="mb-2">
+
+                        📞 {{ broker.phone }}
+
+                    </p>
+
+                    <p class="mb-0">
+
+                        ✉️ {{ broker.email }}
+
+                    </p>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        {% empty %}
+
+        <div class="text-center py-5">
+
+            <h4>
+
+                No brokers available.
+
+            </h4>
+
+        </div>
+
+        {% endfor %}
+
+    </div>
+
+</section>
+
+{% endblock %}

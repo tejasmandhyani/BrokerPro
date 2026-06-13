@@ -1,0 +1,234 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Browse Properties
+{% endblock %}
+
+{% block content %}
+
+<div class="container py-5">
+
+    <h1 class="text-center mb-4">
+
+        Browse Properties
+
+    </h1>
+
+    <!-- SEARCH FILTER -->
+
+    <div class="card shadow mb-5">
+
+        <div class="card-body">
+
+            <form method="GET">
+
+                <div class="row">
+
+                    <div class="col-md-4 mb-2">
+
+                        <input type="text"
+                        name="search"
+                        class="form-control"
+                        placeholder="Search Property"
+                        value="{{ request.GET.search }}">
+
+                    </div>
+
+                    <div class="col-md-3 mb-2">
+
+                        <input type="text"
+                        name="city"
+                        class="form-control"
+                        placeholder="City"
+                        value="{{ request.GET.city }}">
+
+                    </div>
+
+                    <div class="col-md-3 mb-2">
+
+                    <select name="property_type"
+                            class="form-control">
+
+                        <option value="">All Types</option>
+
+                        <option value="Apartment"
+                        {% if request.GET.property_type == "Apartment" %}selected{% endif %}>
+                        Apartment
+                        </option>
+
+                        <option value="Villa"
+                        {% if request.GET.property_type == "Villa" %}selected{% endif %}>
+                        Villa
+                        </option>
+
+                        <option value="Plot"
+                        {% if request.GET.property_type == "Plot" %}selected{% endif %}>
+                        Plot
+                        </option>
+
+                        <option value="Commercial"
+                        {% if request.GET.property_type == "Commercial" %}selected{% endif %}>
+                        Commercial
+                        </option>
+
+                    </select>
+
+                    </div>
+
+                    <div class="col-md-2">
+
+                        <button class="btn btn-primary w-100">
+
+                            Search
+
+                        </button>
+                        <a href="{% url 'browse_properties' %}"
+                        class="btn btn-secondary w-100">
+
+                         Clear
+
+                        </a>
+
+                    </div>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+    <!-- PROPERTY CARDS -->
+
+    <div class="row">
+
+        {% for property in properties %}
+
+        <div class="col-lg-4 col-md-6 mb-4">
+
+            <div class="card property-card shadow h-100">
+
+                {% if property.image_url %}
+
+                    <img src="{{ property.image_url }}"
+                         class="card-img-top"
+                         alt="{{ property.title }}">
+
+                {% endif %}
+
+                <div class="card-body">
+
+                    <h4>
+
+                        {{ property.title }}
+
+                    </h4>
+
+                    <p class="text-muted">
+
+                        📍 {{ property.city }}
+
+                    </p>
+
+                    <h5 class="text-success fw-bold">
+
+                        ₹ {{ property.price|floatformat:0 }}
+
+                    </h5>
+
+                    <div class="row text-center mt-3">
+
+                        <div class="col-4">
+
+                            <strong>
+
+                                {{ property.bedrooms }}
+
+                            </strong>
+
+                            <br>
+
+                            Beds
+
+                        </div>
+
+                        <div class="col-4">
+
+                            <strong>
+
+                                {{ property.bathrooms }}
+
+                            </strong>
+
+                            <br>
+
+                            Baths
+
+                        </div>
+
+                        <div class="col-4">
+
+                            <strong>
+
+                                {{ property.area_sqft }}
+
+                            </strong>
+
+                            <br>
+
+                            Sqft
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <div class="card-footer bg-white border-0">
+
+                {% if preview_mode %}
+
+                <a href="{% url 'preview_property_detail' property.id %}"
+                class="btn btn-custom w-100">
+
+                View Details
+
+                </a>
+
+                {% else %}
+
+                <a href="{% url 'property_detail' property.id %}"
+                 class="btn btn-custom w-100">
+
+                 View Details
+
+                </a>
+
+                {% endif %}
+
+            </div>
+
+            </div>
+
+        </div>
+
+        {% empty %}
+
+        <div class="text-center">
+
+            <h4>
+
+                No Properties Found
+
+            </h4>
+
+        </div>
+
+        {% endfor %}
+
+    </div>
+
+</div>
+
+{% endblock %}
