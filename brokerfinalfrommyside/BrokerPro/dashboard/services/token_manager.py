@@ -3,7 +3,7 @@ import os
 from datetime import datetime
 import requests
 
-BASE_URL = "http://127.0.0.1:8000"
+BASE_URL = "https://brokerpro-80ao.onrender.com"
 
 
 

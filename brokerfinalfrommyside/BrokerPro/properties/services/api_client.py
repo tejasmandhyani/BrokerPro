@@ -2,7 +2,7 @@ import requests
 from urllib.parse import urlencode
 from .token_manager import get_access_token
 
-BASE_URL = "http://127.0.0.1:8000"
+BASE_URL = "https://brokerpro-80ao.onrender.com"
 
 
 def get(endpoint, params=None, auth=True):
