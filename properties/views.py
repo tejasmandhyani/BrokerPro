@@ -19,39 +19,8 @@ from properties.services.api_client import get,get_property,post
 
 #home page 
 def home(request):
+    return render(request, "home.html")
 
-    properties = [
-    {
-        "title": "Test Property"
-    }
-    ]
-
-    featured_properties = [
-        p for p in properties
-        if p["featured"] and p["publish_status"] == "Published"
-    ]
-
-    latest_properties = [
-        p for p in properties
-        if p["publish_status"] == "Published"
-    ]
-
-    latest_properties = sorted(
-        latest_properties,
-        key=lambda x: x["created_at"],
-        reverse=True
-    )[:6]
-
-    context = {
-        "featured_properties": featured_properties,
-        "latest_properties": latest_properties,
-    }
-
-    return render(
-        request,
-        "home.html",
-        context
-    )
 
 def property_detail(request, id):
 
