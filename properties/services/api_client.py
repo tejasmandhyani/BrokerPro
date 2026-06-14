@@ -18,6 +18,7 @@ def get(endpoint, params=None, auth=True):
     url = f"{BASE_URL}{endpoint}"
 
     if params:
+        from urllib.parse import urlencode
         url += "?" + urlencode(params)
 
     headers = {}
@@ -34,13 +35,13 @@ def get(endpoint, params=None, auth=True):
     print("=" * 60)
     print("URL:", url)
     print("STATUS:", response.status_code)
-    print("CONTENT TYPE:", response.headers.get("Content-Type"))
     print("BODY:")
     print(response.text)
     print("=" * 60)
 
-    return response.json()
+    response.raise_for_status()
 
+    return response.json()
 def get_property(id):
 
     return get(
