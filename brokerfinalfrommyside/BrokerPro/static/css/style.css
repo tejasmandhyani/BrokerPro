@@ -1,0 +1,281 @@
+/* ===================================
+   GLOBAL STYLES
+=================================== */
+
+body {
+    font-family: 'Segoe UI', sans-serif;
+    background-color: #f8f9fa;
+    color: #333;
+}
+
+a {
+    text-decoration: none;
+}
+
+
+/* ===================================
+   NAVBAR
+=================================== */
+
+.custom-navbar {
+    background-color: #0d3b66;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+
+.navbar-brand {
+    color: #fff !important;
+}
+
+.nav-link {
+    color: #fff !important;
+    margin-left: 12px;
+    transition: 0.3s;
+}
+
+.nav-link:hover {
+    color: #ffd166 !important;
+}
+
+.notification-container {
+
+    position: fixed;
+
+    top: 90px;
+
+    right: 20px;
+
+    z-index: 9999;
+}
+
+.success-alert {
+
+    min-width: 320px;
+
+    max-width: 400px;
+
+    border-radius: 10px;
+
+    margin-bottom: 10px;
+}
+
+/* ===================================
+   HERO SECTION
+=================================== */
+
+.hero-section {
+
+    min-height: 90vh;
+
+    background-image:
+        linear-gradient(
+            rgba(0, 0, 0, 0.55),
+            rgba(0, 0, 0, 0.55)
+        ),
+        url("../images/hero.jpg");
+
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    text-align: center;
+    color: white;
+}
+
+.hero-section h1 {
+    font-size: 4rem;
+    font-weight: 700;
+}
+
+.hero-section p {
+    font-size: 1.3rem;
+}
+
+
+/* ===================================
+   SECTION TITLES
+=================================== */
+
+section h2 {
+    font-weight: 700;
+}
+
+
+/* ===================================
+   PROPERTY CARD
+=================================== */
+
+.property-card {
+
+    border: none;
+    border-radius: 15px;
+    overflow: hidden;
+
+    transition: all 0.3s ease;
+}
+
+.property-card:hover {
+
+    transform: translateY(-8px);
+
+    box-shadow: 0 15px 30px rgba(0,0,0,0.15);
+}
+
+.property-card img {
+
+    width: 100%;
+    height: 250px;
+
+    object-fit: cover;
+}
+
+.property-card .card-body {
+
+    padding: 20px;
+}
+
+.property-card h4 {
+
+    font-size: 1.3rem;
+    font-weight: 600;
+}
+
+.property-card h5 {
+
+    font-weight: bold;
+}
+
+.property-card .card-footer {
+
+    padding: 15px;
+}
+
+
+/* ===================================
+   CUSTOM BUTTONS
+=================================== */
+
+.btn-custom {
+
+    background-color: #0d3b66;
+    color: white;
+    border: none;
+}
+
+.btn-custom:hover {
+
+    background-color: #08233d;
+    color: white;
+}
+
+
+/* ===================================
+   WHY CHOOSE US
+=================================== */
+
+.bg-light h3 {
+
+    font-size: 3rem;
+}
+
+
+/* ===================================
+   CTA SECTION
+=================================== */
+
+.bg-dark h2 {
+
+    font-weight: 700;
+}
+
+
+/* ===================================
+   FOOTER
+=================================== */
+
+.footer-section {
+
+    background-color: #0d3b66;
+    color: white;
+
+    padding: 50px 0;
+}
+
+.footer-links {
+
+    list-style: none;
+    padding: 0;
+}
+
+.footer-links li {
+
+    margin-bottom: 10px;
+}
+
+.footer-links a {
+
+    color: white;
+}
+
+.footer-links a:hover {
+
+    color: #ffd166;
+}
+
+
+/* ===================================
+   MOBILE RESPONSIVE
+=================================== */
+
+@media (max-width: 768px) {
+
+    .hero-section {
+
+        min-height: 75vh;
+        padding: 20px;
+    }
+
+    .hero-section h1 {
+
+        font-size: 2.3rem;
+    }
+
+    .hero-section p {
+
+        font-size: 1rem;
+    }
+
+    .property-card img {
+
+        height: 220px;
+    }
+
+    .navbar-brand {
+
+        font-size: 1.5rem !important;
+    }
+
+}
+/* PROPERTY DETAIL PAGE */
+
+.gallery-thumb {
+    height: 120px;
+    width: 100%;
+    object-fit: cover;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.gallery-thumb:hover {
+    transform: scale(1.05);
+}
+
+.badge {
+    font-size: 0.9rem;
+    padding: 8px 12px;
+}

@@ -1,0 +1,52 @@
+{% extends 'dashboard/base_dashboard.html' %}
+
+{% block title %}
+Edit Property
+{% endblock %}
+
+{% block content %}
+
+<div class="container-fluid">
+
+    <div class="d-flex justify-content-between mb-4">
+
+        <h2>Edit Property</h2>
+
+        <a href="{% url 'property_list' %}"
+           class="btn btn-secondary">
+
+            Back
+
+        </a>
+
+    </div>
+
+    <div class="card shadow">
+
+        <div class="card-body">
+
+            <form method="POST"
+                  enctype="multipart/form-data">
+
+                {% csrf_token %}
+
+                {{ form.as_p }}
+
+                
+
+                <button type="submit"
+                        class="btn btn-warning">
+
+                    Update Property
+
+                </button>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

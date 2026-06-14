@@ -1,0 +1,204 @@
+/* ==========================
+   DASHBOARD LAYOUT
+========================== */
+
+
+body{
+    margin:0;
+    background:#f4f6f9;
+    font-family:'Segoe UI',sans-serif;
+}
+
+.dashboard-container{
+    display:flex;
+    min-height:100vh;
+}
+
+
+/* SIDEBAR */
+
+.dashboard-sidebar{
+
+    width:260px;
+
+    background:#0d3b66;
+
+    color:white;
+
+    position:fixed;
+
+    height:100vh;
+
+    padding:25px;
+}
+
+.sidebar-logo{
+
+    text-align:center;
+
+    margin-bottom:20px;
+
+    font-weight:bold;
+}
+
+.sidebar-menu{
+
+    list-style:none;
+
+    padding:0;
+}
+
+.sidebar-menu .active{
+    background: rgba(255,255,255,0.2);
+    border-left: 4px solid #ffd166;
+}
+.sidebar-menu li{
+
+    margin-bottom:10px;
+}
+
+.sidebar-menu a{
+
+    color:white;
+
+    text-decoration:none;
+
+    display:block;
+
+    padding:12px;
+
+    border-radius:8px;
+
+    transition:.3s;
+}
+
+.sidebar-menu a:hover{
+
+    background:rgba(255,255,255,.15);
+}
+
+/* CONTENT */
+
+.dashboard-content{
+
+    margin-left:260px;
+
+    width:100%;
+
+    padding:40px;
+}
+
+/* CARDS */
+
+.dashboard-card{
+
+    border:none;
+
+    border-radius:15px;
+
+    transition:.3s;
+}
+
+.dashboard-card:hover{
+
+    transform:translateY(-5px);
+}
+/* ================================
+   Dashboard Alerts
+================================ */
+
+#dashboard-messages{
+    position:fixed;
+    top:90px;
+    right:20px;
+    z-index:9999;
+}
+
+.dashboard-alert{
+
+    min-width:330px;
+
+    margin-bottom:12px;
+
+    padding:15px 20px;
+
+    border-radius:10px;
+
+    font-weight:500;
+
+    box-shadow:0 8px 20px rgba(0,0,0,.15);
+
+    animation:slideIn .4s ease;
+}
+
+.dashboard-alert-success{
+
+    background:#d1e7dd;
+
+    color:#0f5132;
+}
+
+.dashboard-alert-danger{
+
+    background:#f8d7da;
+
+    color:#842029;
+}
+
+.dashboard-alert-warning{
+
+    background:#fff3cd;
+
+    color:#664d03;
+}
+
+.dashboard-alert-info{
+
+    background:#cff4fc;
+
+    color:#055160;
+}
+
+@keyframes slideIn{
+
+    from{
+
+        opacity:0;
+
+        transform:translateX(80px);
+
+    }
+
+    to{
+
+        opacity:1;
+
+        transform:translateX(0);
+
+    }
+
+}
+
+/* MOBILE */
+
+@media(max-width:768px){
+
+    .dashboard-sidebar{
+
+        position:relative;
+
+        width:100%;
+
+        height:auto;
+    }
+
+    .dashboard-content{
+
+        margin-left:0;
+    }
+
+    .dashboard-container{
+
+        flex-direction:column;
+    }
+}

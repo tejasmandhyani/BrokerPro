@@ -1,0 +1,251 @@
+{% extends 'base.html' %}
+
+{% block title %}
+{{ property.title }}
+{% endblock %}
+
+{% block content %}
+
+<div class="container py-5">
+
+    <div class="row">
+
+        <!-- PROPERTY IMAGES -->
+
+        <div class="col-lg-7">
+
+            {% for image in property.images|slice:":1" %}
+
+            <img src="{{ image.image }}"
+                 class="img-fluid rounded shadow mb-3 w-100"
+                 alt="{{ property.title }}">
+
+            {% endfor %}
+
+            <!-- Gallery -->
+
+            <div class="row">
+
+                {% for image in property.images %}
+
+                <div class="col-3 mb-3">
+
+                    <img src="{{ image.image }}"
+                         class="img-fluid rounded shadow-sm gallery-thumb"
+                         alt="{{ property.title }}">
+
+                </div>
+
+                {% endfor %}
+
+            </div>
+            {% if property.videos %}
+
+<div class="mt-4">
+
+    <h4 class="mb-3">
+        Property Videos
+    </h4>
+
+    <div class="row">
+
+        {% for video in property.videos %}
+
+        <div class="col-md-12 mb-3">
+
+            <video
+                class="w-100 rounded shadow"
+                controls>
+
+                <source
+                    src="{{ video.video }}"
+                    type="video/mp4">
+
+            </video>
+
+        </div>
+
+        {% endfor %}
+
+    </div>
+
+</div>
+
+{% endif %}
+
+        </div>
+        <!-- PROPERTY VIDEOS -->
+
+
+
+        <!-- PROPERTY INFO -->
+
+        <div class="col-lg-5">
+
+            <h1 class="fw-bold">
+                {{ property.title }}
+            </h1>
+
+            <p class="text-muted fs-5">
+                📍 {{ property.location }}
+            </p>
+
+            <h2 class="text-success fw-bold mb-4">
+                ₹ {{ property.price }}
+            </h2>
+
+            <div class="mb-3">
+
+                <span class="badge bg-primary">
+                    {{ property.property_type }}
+                </span>
+
+                <span class="badge bg-success">
+                    {{ property.status }}
+                </span>
+
+            </div>
+
+            <div class="card shadow-sm mb-4">
+
+                <div class="card-body">
+
+                    <div class="row text-center">
+
+                        <div class="col-4">
+                            <h4>{{ property.bedrooms }}</h4>
+                            <small>Beds</small>
+                        </div>
+
+                        <div class="col-4">
+                            <h4>{{ property.bathrooms }}</h4>
+                            <small>Baths</small>
+                        </div>
+
+                        <div class="col-4">
+                            <h4>{{ property.area_sqft }}</h4>
+                            <small>Sqft</small>
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <!-- CONTACT ACTIONS -->
+
+            <div class="d-grid gap-2">
+
+                <a href="https://wa.me/91{{ property.broker.phone }}"
+                   target="_blank"
+                   class="btn btn-success btn-lg">
+
+                    WhatsApp Broker
+
+                </a>
+
+                <a href="tel:{{ property.broker.phone }}"
+                   class="btn btn-primary btn-lg">
+
+                    Call Broker
+
+                </a>
+
+                <a href="{% url 'book_appointment' property.id %}"
+                   class="btn btn-warning btn-lg">
+
+                    Book Appointment
+
+                </a>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- DESCRIPTION -->
+
+    <div class="row mt-5">
+
+        <div class="col-md-12">
+
+            <div class="card shadow-sm">
+
+                <div class="card-body">
+
+                    <h3 class="mb-3">
+                        Property Description
+                    </h3>
+
+                    <p>
+                        {{ property.description }}
+                    </p>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- BROKER SECTION -->
+
+    <div class="row mt-5">
+
+        <div class="col-md-12">
+
+            <div class="card shadow-sm">
+
+                <div class="card-body">
+
+                    <h3 class="mb-4">
+                        Broker Information
+                    </h3>
+
+                    <div class="row align-items-center">
+
+                        <div class="col-md-2 text-center">
+
+                            <img src="{{ property.broker.photo }}"
+                              class="rounded-circle img-fluid"
+                            style="width:120px;height:120px;object-fit:cover;">
+
+                        </div>
+
+                        <div class="col-md-10">
+
+                            <h4>{{ property.broker.name }}</h4>
+
+                            <p>{{ property.broker.about }}</p>
+
+                            <p>
+                                Experience:
+                                {{ property.broker.experience }} Years
+                            </p>
+
+                            <p>
+                               📞 {{ property.broker.phone }}
+                            </p>
+
+                            <p>
+                                ✉️ {{ property.broker.email }}
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

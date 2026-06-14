@@ -1,0 +1,328 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Home
+{% endblock %}
+
+{% block content %}
+
+<!-- HERO SECTION -->
+
+<section class="hero-section">
+
+    <div class="container text-center">
+
+        <h1>
+            Find Your Dream Property
+        </h1>
+
+        <p class="mt-3">
+            Buy, Sell & Rent Properties With Confidence
+        </p>
+
+        <div class="mt-4">
+
+            <a href="#featured"
+               class="btn btn-warning btn-lg">
+
+                Explore Properties
+
+            </a>
+
+        </div>
+
+    </div>
+
+</section>
+
+<!-- FEATURED PROPERTIES -->
+
+<section id="featured" class="py-5">
+
+    <div class="container">
+
+        <h2 class="text-center mb-5">
+            Featured Properties
+        </h2>
+
+        <div class="row">
+
+            {% for property in featured_properties %}
+
+            <div class="col-lg-4 col-md-6 mb-4">
+
+                <div class="card property-card shadow h-100">
+
+                    {% if property.image_url %}
+                        <img src="{{ property.image_url }}"
+                             class="card-img-top"
+                             alt="{{ property.title }}">
+                    {% else %}
+                        <img src="https://via.placeholder.com/600x400?text=No+Image"
+                             class="card-img-top"
+                             alt="No Image">
+                    {% endif %}
+
+                    <div class="card-body">
+
+                        <h4>{{ property.title }}</h4>
+
+                        <p class="text-muted">
+                            📍 {{ property.city }}
+                        </p>
+
+                        <h5 class="text-success fw-bold">
+    ₹ {{ property.price|floatformat:0 }}
+</h5>
+
+                        <div class="row text-center mt-3">
+
+                            <div class="col-4">
+                                <strong>{{ property.bedrooms }}</strong>
+                                <br>
+                                Beds
+                            </div>
+
+                            <div class="col-4">
+                                <strong>{{ property.bathrooms }}</strong>
+                                <br>
+                                Baths
+                            </div>
+
+                            <div class="col-4">
+                                <strong>{{ property.area_sqft }}</strong>
+                                <br>
+                                Sqft
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <div class="card-footer bg-white border-0">
+
+                        {% if preview_mode %}
+
+                        <a href="{% url 'preview_property_detail' property.id %}"
+                         class="btn btn-custom w-100">
+
+                             View Details
+
+                        </a>
+
+                        {% else %}
+
+                        <a href="{% url 'property_detail' property.id %}"
+                        class="btn btn-custom w-100">
+
+                         View Details
+
+                        </a>
+
+                    {% endif %}
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            {% empty %}
+
+            <div class="text-center">
+                <p>No featured properties available.</p>
+            </div>
+
+            {% endfor %}
+
+        </div>
+
+    </div>
+
+</section>
+
+<!-- WHY CHOOSE US -->
+
+<section class="bg-light py-5">
+
+    <div class="container">
+
+        <h2 class="text-center mb-5">
+            Why Choose BrokerPro
+        </h2>
+
+        <div class="row text-center">
+
+            <div class="col-md-4 mb-4">
+
+                <h3>🏠</h3>
+
+                <h5>Verified Properties</h5>
+
+                <p>
+                    Every property is verified by our team.
+                </p>
+
+            </div>
+
+            <div class="col-md-4 mb-4">
+
+                <h3>🤝</h3>
+
+                <h5>Trusted Broker</h5>
+
+                <p>
+                    Direct communication with the broker.
+                </p>
+
+            </div>
+
+            <div class="col-md-4 mb-4">
+
+                <h3>📞</h3>
+
+                <h5>Quick Support</h5>
+
+                <p>
+                    Fast appointment scheduling.
+                </p>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+<!-- LATEST PROPERTIES -->
+
+<section class="py-5">
+
+    <div class="container">
+
+        <h2 class="text-center mb-5">
+            Latest Properties
+        </h2>
+
+        <div class="row">
+
+            {% for property in latest_properties %}
+
+            <div class="col-lg-4 col-md-6 mb-4">
+
+                <div class="card property-card shadow h-100">
+
+                    {% if property.image_url %}
+                        <img src="{{ property.image_url }}"
+                             class="card-img-top"
+                             alt="{{ property.title }}">
+                    {% else %}
+                        <img src="https://via.placeholder.com/600x400?text=No+Image"
+                             class="card-img-top"
+                             alt="No Image">
+                    {% endif %}
+
+                    <div class="card-body">
+
+                        <h4>{{ property.title }}</h4>
+
+                        <p class="text-muted">
+                            📍 {{ property.city }}
+                        </p>
+
+                        <h5 class="text-success fw-bold">
+    ₹ {{ property.price|floatformat:0 }}
+</h5>
+
+                        <div class="row text-center mt-3">
+
+                            <div class="col-4">
+                                <strong>{{ property.bedrooms }}</strong>
+                                <br>
+                                Beds
+                            </div>
+
+                            <div class="col-4">
+                                <strong>{{ property.bathrooms }}</strong>
+                                <br>
+                                Baths
+                            </div>
+
+                            <div class="col-4">
+                                <strong>{{ property.area_sqft }}</strong>
+                                <br>
+                                Sqft
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <div class="card-footer bg-white border-0">
+
+                        {% if preview_mode %}
+
+                        <a href="{% url 'preview_property_detail' property.id %}"
+                            class="btn btn-custom w-100">
+
+                             View Details
+
+                        </a>
+
+                        {% else %}
+
+                        <a href="{% url 'property_detail' property.id %}"
+                        class="btn btn-custom w-100">
+
+                        View Details
+
+                        </a>
+
+                        {% endif %}
+                    </div>
+
+                </div>
+
+            </div>
+
+            {% empty %}
+
+            <div class="text-center">
+                <p>No properties available.</p>
+            </div>
+
+            {% endfor %}
+
+        </div>
+
+    </div>
+
+</section>
+
+<!-- CALL TO ACTION -->
+
+<section class="bg-dark text-white py-5">
+
+    <div class="container text-center">
+
+        <h2>
+            Looking For Your Dream Home?
+        </h2>
+
+        <p>
+            Contact our broker today and schedule a property visit.
+        </p>
+
+        <a href="{% url 'consultation' %}"
+           class="btn btn-warning">
+
+          Talk To A Property Expert
+
+        </a>
+
+    </div>
+
+</section>
+
+{% endblock %}
