@@ -20,7 +20,11 @@ from properties.services.api_client import get,get_property,post
 #home page 
 def home(request):
 
-    properties = get("/api/properties/", auth=False)
+    properties = [
+    {
+        "title": "Test Property"
+    }
+    ]
 
     featured_properties = [
         p for p in properties
