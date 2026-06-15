@@ -39,7 +39,7 @@ Free Consultation
 
                         <img
                             id="broker-photo"
-                            src="{{ broker.photo }}"
+                            src="{{ broker.photo.url }}"
                             class="rounded-circle shadow mb-4"
                             style="width:170px;height:170px;object-fit:cover;"
                         >
@@ -132,7 +132,7 @@ Free Consultation
                                     <option
                                         value="{{ broker.id }}"
                                         data-name="{{ broker.name }}"
-                                        data-photo="{{ broker.photo }}"
+                                        data-photo="{{ broker.photo.url }}"
                                         data-phone="{{ broker.phone }}"
                                         data-email="{{ broker.email }}"
                                         data-experience="{{ broker.experience }}"
