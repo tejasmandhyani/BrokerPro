@@ -55,8 +55,23 @@ def book_appointment(request, id):
         try:
 
             AppointmentService.create(
-                request=request,
+
+                user=request.user,
+
                 property=property,
+
+                customer_name=request.POST.get("customer_name"),
+
+                email=request.POST.get("email"),
+
+                phone=request.POST.get("phone"),
+
+                appointment_date=request.POST.get("appointment_date"),
+
+                appointment_time=request.POST.get("appointment_time"),
+
+                message=request.POST.get("message"),
+
             )
 
             messages.success(
@@ -69,7 +84,9 @@ def book_appointment(request, id):
                 id=property.id
             )
 
-        except Exception:
+        except Exception as e:
+
+            print(e)   # <-- Keep this temporarily for debugging
 
             messages.error(
                 request,
