@@ -23,11 +23,11 @@ Property Media
     <div class="text-end">
 
         <span class="badge bg-primary fs-6 me-2">
-            {{ property.images|length }} Images
+            {{ property.images.count }} Images
         </span>
 
         <span class="badge bg-success fs-6 me-3">
-            {{ property.videos|length }} Videos
+            {{ property.videos.count }} Videos
         </span>
 
         <a href="{% url 'property_list' %}"
@@ -57,9 +57,10 @@ Property Media
                     🖼 Upload Images
 
                 </h4>
+
                 <small class="text-muted">
 
-                Supported: JPG, JPEG, PNG (Max 10 MB)
+                    Supported: JPG, JPEG, PNG (Max 10 MB)
 
                 </small>
 
@@ -125,6 +126,7 @@ Property Media
 
                     <input type="file"
                            name="videos"
+                           multiple
                            class="form-control">
 
                     <button type="submit"
@@ -144,10 +146,7 @@ Property Media
 
 </div>
 
-
-
 <hr class="mb-5">
-
 
 <h3 class="fw-bold mb-4">
 
@@ -157,7 +156,7 @@ Property Media
 
 <div class="row">
 
-    {% for image in property.images %}
+    {% for image in property.images.all %}
 
     <div class="col-xl-3 col-lg-4 col-md-6 mb-4">
 
@@ -165,7 +164,7 @@ Property Media
 
             <div class="position-relative">
 
-                <img src="{{ image.image }}"
+                <img src="{{ image.image.url }}"
                      class="w-100"
                      style="height:240px;object-fit:cover;">
 
@@ -198,9 +197,7 @@ Property Media
 
 </div>
 
-
 <hr class="my-5">
-
 
 <h3 class="fw-bold mb-4">
 
@@ -210,7 +207,7 @@ Property Media
 
 <div class="row">
 
-    {% for video in property.videos %}
+    {% for video in property.videos.all %}
 
     <div class="col-lg-6 mb-4">
 
@@ -222,7 +219,8 @@ Property Media
                        class="w-100"
                        style="height:320px;object-fit:cover;">
 
-                    <source src="{{ video.video }}">
+                    <source src="{{ video.video.url }}"
+                            type="video/mp4">
 
                 </video>
 

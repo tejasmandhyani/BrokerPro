@@ -60,7 +60,7 @@ Customers
 
                             <div class="fw-semibold">
 
-                                👤 {{ customer.customer_name }}
+                                👤 {{ customer.user.username }}
 
                             </div>
 
@@ -68,7 +68,7 @@ Customers
 
                         <td>
 
-                            📧 {{ customer.email }}
+                            📧 {{ customer.user.email }}
 
                         </td>
 
@@ -82,7 +82,7 @@ Customers
 
                             <span class="badge bg-secondary">
 
-                                {{ customer.appointments }}
+                                {{ customer.appointment_count }}
 
                             </span>
 

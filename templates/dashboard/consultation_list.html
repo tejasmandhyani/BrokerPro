@@ -35,37 +35,37 @@ Consultation Leads
 
             <tbody>
 
-                {% for lead in leads %}
+                {% for consultation in consultations %}
 
                 <tr>
 
                     <td>
 
-                        <strong>{{ lead.customer_name }}</strong>
+                        <strong>{{ consultation.customer_name }}</strong>
 
                     </td>
 
                     <td>
 
-                        {{ lead.phone }}
+                        {{ consultation.phone }}
 
                     </td>
 
                     <td>
 
-                        {{ lead.email }}
+                        {{ consultation.email }}
 
                     </td>
 
                     <td>
 
-                        ₹ {{ lead.budget }}
+                        ₹ {{ consultation.budget }}
 
                     </td>
 
                     <td>
 
-                        {{ lead.requirements }}
+                        {{ consultation.requirements }}
 
                     </td>
 
@@ -73,7 +73,7 @@ Consultation Leads
 
                         <span class="badge bg-primary">
 
-                            {{ lead.status }}
+                            {{ consultation.status }}
 
                         </span>
 
@@ -81,14 +81,14 @@ Consultation Leads
 
                     <td>
 
-                        {{ lead.created_at|date:"d M Y" }}
+                        {{ consultation.created_at|date:"d M Y" }}
 
                     </td>
 
                     <td>
 
                         <a
-                            href="tel:{{ lead.phone }}"
+                            href="tel:{{ consultation.phone }}"
                             class="btn btn-primary btn-sm"
                         >
 
@@ -97,7 +97,7 @@ Consultation Leads
                         </a>
 
                         <a
-                            href="https://wa.me/91{{ lead.phone }}"
+                            href="https://wa.me/91{{ consultation.phone }}"
                             target="_blank"
                             class="btn btn-success btn-sm"
                         >
