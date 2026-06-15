@@ -22,6 +22,15 @@ from properties.services.api_client import get_property
 from django.contrib import messages
 from dashboard.services.token_manager import login as token_login
 
+#new imports 
+from dashboard.services.dashboard_service import DashboardService
+from dashboard.services.property_service import DashboardPropertyService
+from dashboard.services.appointment_service import DashboardAppointmentService
+from dashboard.services.customer_service import DashboardCustomerService
+from dashboard.services.consultation_service import DashboardConsultationService
+from dashboard.services.broker_service import DashboardBrokerService
+
+
 
 def expire_appointments():
 
@@ -32,9 +41,8 @@ def expire_appointments():
         status='Expired'
     )
 
+@login_required(login_url="login")
 def broker_login(request):
-
-    print("BROKER LOGIN VIEW CALLED")
 
     if request.user.is_authenticated:
 
@@ -52,38 +60,17 @@ def broker_login(request):
             "password"
         )
 
-        user = authenticate(
-            request,
-            username=username,
-            password=password
+        user = DashboardBrokerService.authenticate_broker(
+            username,
+            password
         )
 
-        if user and user.is_staff:
+        if DashboardBrokerService.is_staff(user):
 
             login(
                 request,
                 user
             )
-
-            tokens = token_login(
-                username,
-                password
-            )
-
-            print("TOKENS:", tokens)
-
-            if not tokens:
-
-                messages.error(
-                    request,
-                    "Unable to generate API token."
-                )
-
-                logout(request)
-
-                return redirect(
-                    "broker_login"
-                )
 
             return redirect(
                 "dashboard_home"
@@ -117,23 +104,9 @@ def broker_logout(request):
 @staff_member_required
 def dashboard_home(request):
 
-    response = get(
-        "/api/dashboard/dashboard/",
-        request.user.username
-    )
+    DashboardAppointmentService.expire_pending()
 
-    if response.status_code != 200:
-
-        messages.error(
-            request,
-            "Unable to load dashboard."
-        )
-
-        return redirect(
-            "broker_login"
-        )
-
-    context = response.json()
+    context = DashboardService.get_dashboard_data()
 
     return render(
         request,
@@ -143,18 +116,7 @@ def dashboard_home(request):
 @staff_member_required
 def property_list(request):
 
-    response = get(
-        "/api/dashboard/properties/",
-        request.user.username
-    )
-
-    if response.status_code == 200:
-
-        properties = response.json()
-
-    else:
-
-        properties = []
+    properties = DashboardPropertyService.get_all()
 
     return render(
         request,
@@ -164,6 +126,7 @@ def property_list(request):
         }
     )
 
+@login_required(login_url="broker_login")
 @staff_member_required
 def property_create(request):
 
@@ -173,40 +136,28 @@ def property_create(request):
 
         if form.is_valid():
 
-            files = []
-
-            for image in request.FILES.getlist("images"):
-
-                files.append(
-                    ("images", image)
-                )
-
-            for video in request.FILES.getlist("videos"):
-
-                files.append(
-                    ("videos", video)
-                )
-
-            response = post(
-             "/api/dashboard/properties/create/",
-            username=request.user.username,
-            data=form.cleaned_data,
-            files=files
+            broker = DashboardBrokerService.get_by_user(
+                request.user
             )
 
-            if response.status_code == 201:
+            DashboardPropertyService.create(
 
-                messages.success(
-                    request,
-                    "Property added successfully."
-                )
+                form=form,
 
-                return redirect("property_list")
+                images=request.FILES.getlist("images"),
 
-            messages.error(
+                videos=request.FILES.getlist("videos"),
+
+                broker=broker,
+
+            )
+
+            messages.success(
                 request,
-                response.text
+                "Property created successfully."
             )
+
+            return redirect("property_list")
 
     else:
 
@@ -223,53 +174,39 @@ def property_create(request):
 @staff_member_required
 def property_update(request, id):
 
+    property = DashboardPropertyService.get_by_id(id)
+
     if request.method == "POST":
 
-        response = put(
-            f"/api/dashboard/properties/{id}/",
-            request.user.username,
-            data=request.POST
+        form = PropertyForm(
+            request.POST,
+            instance=property
         )
 
-        if response.status_code == 200:
+        if form.is_valid():
+
+            DashboardPropertyService.update(
+
+                property=property,
+
+                form=form,
+
+            )
+
+            messages.success(
+                request,
+                "Property updated successfully."
+            )
 
             return redirect(
                 "property_list"
             )
 
-    response = get(
-        f"/api/dashboard/properties/{id}/",
-        request.user.username
-    )
+    else:
 
-    if response.status_code != 200:
-
-        messages.error(
-            request,
-            "Property not found."
+        form = PropertyForm(
+            instance=property
         )
-
-        return redirect(
-            "property_list"
-        )
-
-    property = response.json()
-
-    form = PropertyForm(
-        initial={
-            "title": property["title"],
-            "city": property["city"],
-            "location": property["location"],
-            "property_type": property["property_type"],
-            "status": property["status"],
-            "price": property["price"],
-            "bedrooms": property["bedrooms"],
-            "bathrooms": property["bathrooms"],
-            "area_sqft": property["area_sqft"],
-            "description": property["description"],
-            "featured": property["featured"],
-        }
-    )
 
     return render(
         request,
@@ -279,36 +216,23 @@ def property_update(request, id):
             "property": property
         }
     )
-
 @staff_member_required
 def property_delete(request, id):
 
+    property = DashboardPropertyService.get_by_id(id)
+
     if request.method == "POST":
 
-        response = delete(
-            f"/api/dashboard/properties/delete/{id}/",
-            request.user.username
-        )
+        DashboardPropertyService.delete(property)
 
-        if response.status_code == 200:
-
-            return redirect("property_list")
-
-    response = get(
-        f"/api/dashboard/properties/{id}/",
-        request.user.username
-    )
-
-    if response.status_code != 200:
-
-        messages.error(
+        messages.success(
             request,
-            "Property not found."
+            "Property deleted successfully."
         )
 
-        return redirect("property_list")
-
-    property = response.json()
+        return redirect(
+            "property_list"
+        )
 
     return render(
         request,
@@ -317,188 +241,97 @@ def property_delete(request, id):
             "property": property
         }
     )
-
 from django.contrib import messages
+@login_required(login_url="broker_login")
 @staff_member_required
 def property_images(request, id):
 
-    response = get(
-        f"/api/dashboard/properties/{id}/",
-        request.user.username
-    )
-
-    if response.status_code != 200:
-
-        messages.error(
-            request,
-            "Property not found."
-        )
-
-        return redirect(
-            "property_list"
-        )
-
-    property = response.json()
+    property = DashboardPropertyService.get_by_id(id)
 
     if request.method == "POST":
 
-        upload_type = request.POST.get(
-            "upload_type"
+        DashboardPropertyService.add_images(
+
+            property,
+
+            request.FILES.getlist("images")
+
         )
 
-        if upload_type == "image":
+        DashboardPropertyService.add_videos(
 
-            print(request.FILES)
-            print(request.FILES.getlist("images"))
-            print(len(request.FILES.getlist("images")))
+            property,
 
-            response = post(
+            request.FILES.getlist("videos")
 
-                f"/api/dashboard/properties/images/{id}/",
+        )
 
-                request.user.username,
-
-                files=request.FILES
-            )
-
-            if response.status_code == 201:
-
-                messages.success(
-                    request,
-                    "Images uploaded successfully."
-                )
-
-            else:
-
-                messages.error(
-                    request,
-                    "Image upload failed."
-                )
-
-        elif upload_type == "video":
-
-            response = post(
-
-                f"/api/dashboard/properties/videos/{id}/",
-
-                request.user.username,
-
-                files=request.FILES
-            )
-
-            if response.status_code == 201:
-
-                messages.success(
-                    request,
-                    "Video uploaded successfully."
-                )
-
-            else:
-
-                messages.error(
-                    request,
-                    "Video upload failed."
-                )
+        messages.success(
+            request,
+            "Media uploaded successfully."
+        )
 
         return redirect(
             "property_images",
-            id=id
+            id=property.id
         )
 
     return render(
-
         request,
-
         "dashboard/property_images.html",
-
         {
             "property": property
         }
-
     )
+@login_required(login_url="broker_login")
 @staff_member_required
 def delete_property_image(request, id):
 
-    response = delete(
-
-        f"/api/dashboard/properties/image/delete/{id}/",
-
-        request.user.username
-
+    image = get_object_or_404(
+        PropertyImage,
+        id=id
     )
 
-    if response.status_code == 200:
+    property_id = image.property.id
 
-        messages.success(
-            request,
-            "Image deleted successfully."
-        )
+    DashboardPropertyService.delete_image(image)
 
-    else:
-
-        messages.error(
-            request,
-            "Unable to delete image."
-        )
+    messages.success(
+        request,
+        "Image deleted successfully."
+    )
 
     return redirect(
-        request.META.get(
-            "HTTP_REFERER",
-            "property_list"
-        )
+        "property_images",
+        id=property_id
     )
+@login_required(login_url="broker_login")
 @staff_member_required
 def delete_property_video(request, id):
 
-    response = delete(
-
-        f"/api/dashboard/properties/video/delete/{id}/",
-
-        request.user.username
-
+    video = get_object_or_404(
+        PropertyVideo,
+        id=id
     )
 
-    if response.status_code == 200:
+    property_id = video.property.id
 
-        messages.success(
-            request,
-            "Video deleted successfully."
-        )
+    DashboardPropertyService.delete_video(video)
 
-    else:
-
-        messages.error(
-            request,
-            "Unable to delete video."
-        )
+    messages.success(
+        request,
+        "Video deleted successfully."
+    )
 
     return redirect(
-        request.META.get(
-            "HTTP_REFERER",
-            "property_list"
-        )
+        "property_images",
+        id=property_id
     )
-
+@login_required(login_url="broker_login")
 @staff_member_required
 def appointment_list(request):
 
-    response = get(
-        "/api/dashboard/appointments/",
-        request.user.username
-    )
-
-    if response.status_code != 200:
-
-        messages.error(
-            request,
-            "Unable to load appointments."
-        )
-
-        return redirect(
-            "dashboard_home"
-        )
-
-    appointments = response.json()
+    appointments = DashboardAppointmentService.get_all()
 
     return render(
         request,
@@ -507,83 +340,49 @@ def appointment_list(request):
             "appointments": appointments
         }
     )
-
+@login_required(login_url="broker_login")
 @staff_member_required
 def accept_appointment(request, id):
 
-    response = post(
+    appointment = DashboardAppointmentService.get_by_id(id)
 
-        f"/api/dashboard/appointments/accept/{id}/",
-
-        request.user.username
-
+    DashboardAppointmentService.accept(
+        appointment
     )
 
-    if response.status_code == 200:
-
-        messages.success(
-            request,
-            "Appointment accepted successfully."
-        )
-
-    else:
-
-        messages.error(
-            request,
-            "Unable to accept appointment."
-        )
+    messages.success(
+        request,
+        "Appointment accepted."
+    )
 
     return redirect(
         "appointment_list"
     )
 
-
+@login_required(login_url="broker_login")
 @staff_member_required
 def reject_appointment(request, id):
 
-    response = post(
-        f"/api/dashboard/appointments/reject/{id}/",
-        request.user.username
+    appointment = DashboardAppointmentService.get_by_id(id)
+
+    DashboardAppointmentService.reject(
+        appointment
     )
 
-    if response.status_code == 200:
-
-        messages.success(
-            request,
-            "Appointment rejected successfully."
-        )
-
-    else:
-
-        messages.error(
-            request,
-            "Unable to reject appointment."
-        )
+    messages.success(
+        request,
+        "Appointment rejected."
+    )
 
     return redirect(
         "appointment_list"
     )
 #customer functionn
+@login_required(login_url="broker_login")
 @staff_member_required
 def customer_list(request):
 
-    response = get(
-        "/api/dashboard/customers/",
-        request.user.username
-    )
-
-    if response.status_code != 200:
-
-        messages.error(
-            request,
-            "Unable to load customers."
-        )
-
-        return redirect(
-            "dashboard_home"
-        )
-
-    customers = response.json()
+    customers = DashboardCustomerService.get_all()
 
     return render(
         request,
@@ -593,63 +392,28 @@ def customer_list(request):
         }
     )
 #whatsapp view 
+@login_required(login_url="broker_login")
 @staff_member_required
 def whatsapp_customer(request, id):
 
-    appointment = get_object_or_404(
-        Appointment,
-        id=id
-    )
-
-    message = f"""
-Hello {appointment.customer_name},
-
-Your appointment request for
-{appointment.property.title}
-
-Status: {appointment.status}
-
-Date: {appointment.appointment_date}
-Time: {appointment.appointment_time}
-
-For any questions, please contact us.
-
-Thank you,
-BrokerPro
-"""
-
-    encoded_message = urllib.parse.quote(
-        message
-    )
+    appointment = DashboardAppointmentService.get_by_id(id)
 
     whatsapp_url = (
-        f"https://wa.me/91{appointment.phone}"
-        f"?text={encoded_message}"
+        DashboardAppointmentService
+        .get_whatsapp_url(
+            appointment
+        )
     )
 
     return redirect(
         whatsapp_url
     )
-
 #dashboard todays and upcoming visits 
+@login_required(login_url="broker_login")
 @staff_member_required
 def today_visits(request):
 
-    response = get(
-        "/api/dashboard/appointments/today/",
-        request.user.username
-    )
-
-    if response.status_code != 200:
-
-        messages.error(
-            request,
-            "Unable to load today's visits."
-        )
-
-        return redirect("appointment_list")
-
-    appointments = response.json()
+    appointments = DashboardAppointmentService.get_today()
 
     return render(
         request,
@@ -658,24 +422,11 @@ def today_visits(request):
             "appointments": appointments
         }
     )
+@login_required(login_url="broker_login")
 @staff_member_required
 def upcoming_visits(request):
 
-    response = get(
-        "/api/dashboard/appointments/upcoming/",
-        request.user.username
-    )
-
-    if response.status_code != 200:
-
-        messages.error(
-            request,
-            "Unable to load upcoming visits."
-        )
-
-        return redirect("appointment_list")
-
-    appointments = response.json()
+    appointments = DashboardAppointmentService.get_upcoming()
 
     return render(
         request,
@@ -684,168 +435,109 @@ def upcoming_visits(request):
             "appointments": appointments
         }
     )
-
 #consultation List 
+@login_required(login_url="broker_login")
 @staff_member_required
 def consultation_list(request):
 
-    response = get(
-        "/api/dashboard/consultations/",
-        request.user.username
-    )
-
-    if response.status_code != 200:
-
-        messages.error(
-            request,
-            "Unable to load consultation leads."
-        )
-
-        return redirect(
-            "dashboard_home"
-        )
-
-    leads = response.json()
+    consultations = DashboardConsultationService.get_all()
 
     return render(
         request,
         "dashboard/consultation_list.html",
         {
-            "leads": leads
+            "consultations": consultations
         }
     )
 #publish and unpublish views
 @staff_member_required
 def publish_property(request, id):
 
-    response = post(
-        f"/api/dashboard/properties/publish/{id}/",
-        request.user.username
+    property = DashboardPropertyService.get_by_id(id)
+
+    DashboardPropertyService.publish(property)
+
+    messages.success(
+        request,
+        "Property published successfully."
     )
 
-    if response.status_code == 200:
-
-        messages.success(
-            request,
-            "Property published successfully."
-        )
-
-    else:
-
-        messages.error(
-            request,
-            "Unable to publish property."
-        )
-
-    return redirect(
-        "property_list"
-    )
-
-
+    return redirect("property_list")
 @staff_member_required
 def unpublish_property(request, id):
 
-    response = post(
-        f"/api/dashboard/properties/unpublish/{id}/",
-        request.user.username
+    property = DashboardPropertyService.get_by_id(id)
+
+    DashboardPropertyService.unpublish(property)
+
+    messages.success(
+        request,
+        "Property moved to draft."
     )
 
-    if response.status_code == 200:
+    return redirect("property_list")
 
-        messages.success(
-            request,
-            "Property unpublished successfully."
-        )
 
-    else:
-
-        messages.error(
-            request,
-            "Unable to unpublish property."
-        )
-
-    return redirect(
-        "property_list"
-    )
 #rollback and versions 
+@login_required(login_url="broker_login")
 @staff_member_required
 def property_versions(request, id):
 
-    response = get(
-        f"/api/dashboard/property/{id}/versions/",
-        request.user.username
+    property = DashboardPropertyService.get_by_id(id)
+
+    versions = DashboardPropertyService.get_versions(
+        property
     )
-
-    if response.status_code != 200:
-
-        messages.error(
-            request,
-            "Unable to load property versions."
-        )
-
-        return redirect(
-            "property_list"
-        )
-
-    versions = response.json()
 
     return render(
         request,
         "dashboard/property_versions.html",
         {
-            "versions": versions
+            "property": property,
+            "versions": versions,
         }
     )
+@login_required(login_url="broker_login")
 @staff_member_required
-def rollback_property(request, version_id):
+def rollback_property(request, property_id, version_id):
 
-    response = post(
-        f"/api/dashboard/rollback/{version_id}/",
-        request.user.username
+    property = DashboardPropertyService.get_by_id(
+        property_id
     )
 
-    if response.status_code == 200:
+    version = get_object_or_404(
+        PropertyVersion,
+        id=version_id,
+        property=property
+    )
 
-        messages.success(
-            request,
-            "Property restored successfully."
-        )
+    DashboardPropertyService.rollback(
+        property,
+        version
+    )
 
-    else:
-
-        messages.error(
-            request,
-            "Unable to restore property."
-        )
+    messages.success(
+        request,
+        "Property rolled back successfully."
+    )
 
     return redirect(
-        request.META.get(
-            "HTTP_REFERER",
-            "property_list"
-        )
+        "property_versions",
+        id=property.id
     )
 #preview
 @staff_member_required
 def preview_home(request):
 
-    properties = get_dashboard_properties(
-        request.user.username
+    featured_properties = (
+        DashboardPropertyService
+        .get_featured()
     )
 
-    print("=" * 80)
-    print(properties)
-    print("=" * 80)
-
-    featured_properties = [
-        p for p in properties
-        if p["featured"]
-    ]
-
-    latest_properties = sorted(
-        properties,
-        key=lambda x: x["created_at"],
-        reverse=True
-    )[:6]
+    latest_properties = (
+        DashboardPropertyService
+        .get_latest(6)
+    )
 
     return render(
         request,
@@ -859,34 +551,33 @@ def preview_home(request):
 @staff_member_required
 def preview_property_list(request):
 
-    properties = get_dashboard_properties(
-        request.user.username
-    )
+    properties = DashboardPropertyService.get_all()
 
-    search = request.GET.get("search", "").lower()
-    city = request.GET.get("city", "").lower()
-    property_type = request.GET.get("property_type", "").lower()
+    search = request.GET.get("search")
+
+    city = request.GET.get("city")
+
+    property_type = request.GET.get(
+        "property_type"
+    )
 
     if search:
 
-        properties = [
-            p for p in properties
-            if search in p["title"].lower()
-        ]
+        properties = properties.filter(
+            title__icontains=search
+        )
 
     if city:
 
-        properties = [
-            p for p in properties
-            if city in p["city"].lower()
-        ]
+        properties = properties.filter(
+            city__icontains=city
+        )
 
     if property_type:
 
-        properties = [
-            p for p in properties
-            if property_type in p["property_type"].lower()
-        ]
+        properties = properties.filter(
+            property_type=property_type
+        )
 
     return render(
         request,
@@ -899,14 +590,7 @@ def preview_property_list(request):
 @staff_member_required
 def preview_property_detail(request, id):
 
-    property = get_dashboard_property(
-        id,
-        request.user.username
-    )
-
-    print("=" * 80)
-    print(property)
-    print("=" * 80)
+    property = DashboardPropertyService.get_by_id(id)
 
     return render(
         request,
