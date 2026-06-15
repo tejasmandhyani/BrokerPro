@@ -32,3 +32,12 @@ class BrokerService:
     def count():
 
         return Broker.objects.count()
+    
+    @staticmethod
+    def get_all_with_first():
+
+        brokers = Broker.objects.all()
+
+        broker = brokers.first()
+
+        return brokers, broker
