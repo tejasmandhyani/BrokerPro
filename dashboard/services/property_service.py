@@ -1,5 +1,5 @@
 from properties.models import Property, PropertyImage, PropertyVideo,PropertyVersion
-
+import cloudinary.uploader
 
 class DashboardPropertyService:
 
@@ -182,14 +182,22 @@ class DashboardPropertyService:
             image=image
             )
 
+    import cloudinary.uploader
+
     @staticmethod
     def add_videos(property, videos):
 
         for video in videos:
 
+            result = cloudinary.uploader.upload_large(
+            video,
+            resource_type="video",
+            folder="property_videos"
+            )
+
             PropertyVideo.objects.create(
             property=property,
-            video=video
+            video=result["secure_url"]
             )
     @staticmethod        
     def delete_image(image):

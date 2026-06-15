@@ -120,8 +120,8 @@ class PropertyVideo(models.Model):
         related_name='videos'
     )
 
-    video = models.FileField(
-        upload_to='property_videos/'
+    video = models.URLField(
+    max_length=500
     )
 
     uploaded_at = models.DateTimeField(
