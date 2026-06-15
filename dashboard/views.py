@@ -250,26 +250,39 @@ def property_images(request, id):
 
     if request.method == "POST":
 
-        DashboardPropertyService.add_images(
+        try:
 
-            property,
+            upload_type = request.POST.get("upload_type")
 
-            request.FILES.getlist("images")
+            if upload_type == "image":
 
-        )
+                DashboardPropertyService.add_images(
+                    property,
+                    request.FILES.getlist("images")
+                )
 
-        DashboardPropertyService.add_videos(
+            elif upload_type == "video":
 
-            property,
+                DashboardPropertyService.add_videos(
+                    property,
+                    request.FILES.getlist("videos")
+                )
 
-            request.FILES.getlist("videos")
+            messages.success(
+                request,
+                "Media uploaded successfully."
+            )
 
-        )
+        except Exception as e:
 
-        messages.success(
-            request,
-            "Media uploaded successfully."
-        )
+            import traceback
+
+            traceback.print_exc()
+
+            messages.error(
+                request,
+                str(e)
+            )
 
         return redirect(
             "property_images",
