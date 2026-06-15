@@ -109,11 +109,9 @@ Browse Properties
 
             <div class="card property-card shadow h-100">
 
-                {% if property.image_url %}
+                {% if property.images.first %}
 
-                    <img src="{{ property.image_url }}"
-                         class="card-img-top"
-                         alt="{{ property.title }}">
+                    <img src="{{ property.images.first.image.url }}">
 
                 {% endif %}
 

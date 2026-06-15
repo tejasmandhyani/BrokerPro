@@ -53,8 +53,8 @@ Home
 
                 <div class="card property-card shadow h-100">
 
-                    {% if property.image_url %}
-                        <img src="{{ property.image_url }}"
+                    {% if property.images.first %}
+                        <img src="{{ property.images.first.image.url }}"
                              class="card-img-top"
                              alt="{{ property.title }}">
                     {% else %}
@@ -213,8 +213,8 @@ Home
 
                 <div class="card property-card shadow h-100">
 
-                    {% if property.image_url %}
-                        <img src="{{ property.image_url }}"
+                    {% if property.images.first %}
+                        <img src="{{ property.images.first.image.url }}"
                              class="card-img-top"
                              alt="{{ property.title }}">
                     {% else %}
