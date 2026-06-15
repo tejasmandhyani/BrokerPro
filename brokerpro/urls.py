@@ -32,10 +32,6 @@ urlpatterns = [
     path(
     "api/dashboard/",
     include("dashboard.api_urls")
-),
+    ),
 ]
 
-urlpatterns += static(
-    settings.MEDIA_URL,
-    document_root=settings.MEDIA_ROOT
-)
