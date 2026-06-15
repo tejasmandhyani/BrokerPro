@@ -41,7 +41,6 @@ def expire_appointments():
         status='Expired'
     )
 
-@login_required(login_url="login")
 def broker_login(request):
 
     if request.user.is_authenticated:
