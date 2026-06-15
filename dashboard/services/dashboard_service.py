@@ -35,32 +35,4 @@ class DashboardService:
 
         }
     
-    @staticmethod
-    def add_images(property, images):
-
-        for image in images:
-
-            PropertyImage.objects.create(
-            property=property,
-            image=image
-            )
     
-    @staticmethod
-    def add_videos(property, videos):
-
-        for video in videos:
-
-            PropertyVideo.objects.create(
-            property=property,
-            video=video
-            )
-    
-    @staticmethod
-    def delete_image(image):
-
-        image.delete()
-    
-    @staticmethod
-    def delete_video(video):
-
-        video.delete()

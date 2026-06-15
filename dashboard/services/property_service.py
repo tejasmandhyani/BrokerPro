@@ -1,4 +1,4 @@
-from properties.models import Property, PropertyImage, PropertyVideo
+from properties.models import Property, PropertyImage, PropertyVideo,PropertyVersion
 
 
 class DashboardPropertyService:
@@ -61,11 +61,29 @@ class DashboardPropertyService:
     
     @staticmethod
     def update(
-    *,
-    property,
-    form,
-    ):
+        *,
+        property,
+        form,
+        ):
 
+    # Save current state before updating
+        PropertyVersion.objects.create(
+            property=property,
+            title=property.title,
+            city=property.city,
+            location=property.location,
+            property_type=property.property_type,
+            status=property.status,
+            publish_status=property.publish_status,
+            price=property.price,
+            bedrooms=property.bedrooms,
+            bathrooms=property.bathrooms,
+            area_sqft=property.area_sqft,
+            description=property.description,
+            featured=property.featured,
+            )
+
+    # Update property
         property.title = form.cleaned_data["title"]
         property.city = form.cleaned_data["city"]
         property.location = form.cleaned_data["location"]
@@ -81,7 +99,6 @@ class DashboardPropertyService:
         property.save()
 
         return property
-    
     @staticmethod
     def delete(property):
 
@@ -154,3 +171,33 @@ class DashboardPropertyService:
             )
             .order_by("-created_at")[:limit]
         )
+    
+    @staticmethod
+    def add_images(property, images):
+
+        for image in images:
+
+            PropertyImage.objects.create(
+            property=property,
+            image=image
+            )
+
+    @staticmethod
+    def add_videos(property, videos):
+
+        for video in videos:
+
+            PropertyVideo.objects.create(
+            property=property,
+            video=video
+            )
+    @staticmethod        
+    def delete_image(image):
+
+        image.delete()
+
+    @staticmethod
+    def delete_video(video):
+
+        video.delete()
+    
