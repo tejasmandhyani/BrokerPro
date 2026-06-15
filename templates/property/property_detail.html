@@ -14,52 +14,64 @@
 
         <div class="col-lg-7">
 
-            {% for image in property.images|slice:":1" %}
+            {% for image in property.images.all|slice:":1" %}
 
-            <img src="{{ image.image }}"
-                 class="img-fluid rounded shadow mb-3 w-100"
-                 alt="{{ property.title }}">
+            {% if image.image %}
+            <img src="{{ image.image.url }}"
+             class="img-fluid rounded shadow mb-3 w-100"
+             alt="{{ property.title }}">
+            {% endif %}
 
-            {% endfor %}
+            {% empty %}
+
+    <div class="alert alert-secondary text-center">
+        No Property Image Available
+    </div>
+
+{% endfor %}
 
             <!-- Gallery -->
 
             <div class="row">
 
-                {% for image in property.images %}
+                {% for image in property.images.all %}
 
                 <div class="col-3 mb-3">
+                    {% if image.image %}
 
-                    <img src="{{ image.image }}"
+                    <img src="{{ image.image.url }}"
                          class="img-fluid rounded shadow-sm gallery-thumb"
                          alt="{{ property.title }}">
+                    {% endif %}
 
                 </div>
 
                 {% endfor %}
 
             </div>
-            {% if property.videos %}
+            {% if property.videos.exists %}
 
-<div class="mt-4">
+            <div class="mt-4">
 
-    <h4 class="mb-3">
-        Property Videos
-    </h4>
+                <h4 class="mb-3">
+                Property Videos
+                </h4>
 
-    <div class="row">
+            <div class="row">
 
-        {% for video in property.videos %}
+            {% for video in property.videos.all %}
 
-        <div class="col-md-12 mb-3">
+            <div class="col-md-12 mb-3">
 
             <video
                 class="w-100 rounded shadow"
                 controls>
 
-                <source
-                    src="{{ video.video }}"
-                    type="video/mp4">
+                {% if video.video %}
+                    <source
+                src="{{ video.video.url }}"
+                type="video/mp4">
+                {% endif %}
 
             </video>
 
@@ -209,9 +221,16 @@
 
                         <div class="col-md-2 text-center">
 
-                            <img src="{{ property.broker.photo }}"
-                              class="rounded-circle img-fluid"
+                            {% if property.broker.photo %}
+                            <img src="{{ property.broker.photo.url }}"
+                            class="rounded-circle img-fluid"
                             style="width:120px;height:120px;object-fit:cover;">
+                            {% else %}
+                            <div class="rounded-circle bg-secondary d-flex justify-content-center align-items-center"
+                            style="width:120px;height:120px;">
+                            <span class="text-white">No Photo</span>
+                            </div>
+                            {% endif %}
 
                         </div>
 
