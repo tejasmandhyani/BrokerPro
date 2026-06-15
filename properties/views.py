@@ -1,11 +1,8 @@
-from django.shortcuts import render, get_object_or_404,redirect
-from .models import Property,Appointment,CustomerProfile,Broker
+from django.shortcuts import render,redirect
 from django.contrib import messages
 from .forms import ConsultationForm
 from django.contrib.auth import login
-from django.contrib.auth.forms import AuthenticationForm
-from django.contrib.auth import authenticate
-from django.contrib.auth import logout
+
 from .forms import CustomerRegistrationForm
 from django.contrib.auth.decorators import login_required
 #property add using restapiframework 
@@ -14,17 +11,31 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated,AllowAny
 from .serializers import PropertySerializer,PropertyDetailSerializer,AppointmentSerializer,BrokerSerializer,ConsultationSerializer
-from properties.services.api_client import get,get_property,post
+
+#main imports after updating architecture
+from properties.services.property_service import PropertyService
+from properties.services.broker_service import BrokerService
+from properties.services.appointment_service import AppointmentService
+from properties.services.consultation_service import ConsultationService
+from properties.services.home_service import HomeService
+from properties.services.auth_service import AuthService
 
 
-#home page 
+#updated with new service 
 def home(request):
-    return render(request, "home.html")
 
+    context = HomeService.get_home_page_data()
 
+    return render(
+        request,
+        "home.html",
+        context
+    )
+
+#changed property_detail with new service
 def property_detail(request, id):
 
-    property = get_property(id)
+    property = PropertyService.get_by_id(id)
 
     return render(
         request,
@@ -33,53 +44,20 @@ def property_detail(request, id):
             "property": property
         }
     )
+#updated with new service
 @login_required(login_url="login")
 def book_appointment(request, id):
 
-    property = get_object_or_404(
-        Property,
-        id=id
-    )
+    property = PropertyService.get_by_id(id)
 
     if request.method == "POST":
 
-        status_code = post(
+        try:
 
-            "/api/appointments/",
-
-            {
-
-                "property": property.id,
-
-                "customer_name": request.POST.get(
-                    "customer_name"
-                ),
-
-                "email": request.POST.get(
-                    "email"
-                ),
-
-                "phone": request.POST.get(
-                    "phone"
-                ),
-
-                "appointment_date": request.POST.get(
-                    "appointment_date"
-                ),
-
-                "appointment_time": request.POST.get(
-                    "appointment_time"
-                ),
-
-                "message": request.POST.get(
-                    "message"
-                )
-
-            }
-
-        )
-
-        if status_code == 201:
+            AppointmentService.create(
+                request=request,
+                property=property,
+            )
 
             messages.success(
                 request,
@@ -91,7 +69,7 @@ def book_appointment(request, id):
                 id=property.id
             )
 
-        else:
+        except Exception:
 
             messages.error(
                 request,
@@ -109,15 +87,11 @@ from .models import Broker
 
 from properties.models import CustomerProfile
 
+#updated with new service 
 @login_required(login_url="login")
 def consultation(request):
 
-    brokers = get(
-        "/api/brokers/",
-        auth=False
-    )
-
-    broker = brokers[0] if brokers else None
+    brokers, broker = BrokerService.get_all_with_first()
 
     form = ConsultationForm()
 
@@ -127,23 +101,12 @@ def consultation(request):
 
         if form.is_valid():
 
-            customer = CustomerProfile.objects.get(
-                user=request.user
-            )
+            try:
 
-            data = form.cleaned_data.copy()
-
-            data["broker"] = request.POST.get("broker")
-            data["customer_name"] = customer.full_name
-            data["email"] = request.user.email
-            data["phone"] = customer.phone
-
-            status_code = post(
-                "/api/consultation/",
-                data
-            )
-
-            if status_code == 201:
+                ConsultationService.create(
+                    request=request,
+                    form=form
+                )
 
                 messages.success(
                     request,
@@ -152,10 +115,12 @@ def consultation(request):
 
                 return redirect("consultation")
 
-            messages.error(
-                request,
-                "Unable to submit consultation request."
-            )
+            except Exception:
+
+                messages.error(
+                    request,
+                    "Unable to submit consultation request."
+                )
 
     return render(
         request,
@@ -163,80 +128,52 @@ def consultation(request):
         {
             "form": form,
             "brokers": brokers,
-            "broker": broker
-        }
+            "broker": broker,
+        },
     )
-    
+#updated with new service 
 def property_list(request):
 
-    params = {}
+    properties = PropertyService.search(
 
-    if request.GET.get("search"):
-        params["search"] = request.GET.get("search")
+        search=request.GET.get("search"),
 
-    if request.GET.get("city"):
-        params["city"] = request.GET.get("city")
+        city=request.GET.get("city"),
 
-    if request.GET.get("property_type"):
-        params["property_type"] = request.GET.get("property_type")
+        property_type=request.GET.get("property_type"),
 
-    properties = get(
-    "/api/properties/",
-    params=params,
-    auth=False
     )
-
-    properties = [
-        p for p in properties
-        if p["publish_status"] == "Published"
-    ]
 
     return render(
-        request,
-        "property/browse_properties.html",
-        {
-            "properties": properties
-        }
-    )
 
+        request,
+
+        "property/browse_properties.html",
+
+        {
+
+            "properties": properties
+
+        }
+
+    )
 #register - view
 def register(request):
 
-    if request.method == 'POST':
+    if request.method == "POST":
 
-        form = CustomerRegistrationForm(
-            request.POST
-        )
+        form = CustomerRegistrationForm(request.POST)
 
         if form.is_valid():
 
-            user = form.save()
-            CustomerProfile.objects.create(
-
-             user=user,
-
-            full_name=form.cleaned_data[
-              'full_name'
-             ],
-
-            phone=form.cleaned_data[
-             'phone'
-              ],
-
-             city=form.cleaned_data[
-             'city'
-             ]
-            )
-            
+            user = AuthService.register(form)
 
             login(
                 request,
                 user
             )
 
-            return redirect(
-                'home'
-            )
+            return redirect("home")
 
     else:
 
@@ -244,12 +181,11 @@ def register(request):
 
     return render(
         request,
-        'registration/register.html',
+        "registration/register.html",
         {
-            'form': form
+            "form": form
         }
     )
-
 #login - view 
 def login_view(request):
 
@@ -267,10 +203,10 @@ def login_view(request):
             'password'
         )
 
-        user = authenticate(
-            request,
-            username=username,
-            password=password
+        user = AuthService.login(
+        request,
+        username,
+        password
         )
 
         if user is not None:
@@ -305,7 +241,7 @@ def login_view(request):
 @login_required(login_url='login')
 def logout_view(request):
 
-    logout(request)
+    AuthService.logout(request)
 
     messages.success(
         request,
@@ -316,36 +252,27 @@ def logout_view(request):
         'home'
     )
 
-@login_required(login_url='login')
+@login_required(login_url="login")
 def profile_view(request):
 
-    appointments = Appointment.objects.filter(
-        user=request.user
-    ).order_by(
-        '-created_at'
+    appointments = AppointmentService.get_user_appointments(
+        request.user
     )
 
     context = {
-
-        'appointments': appointments,
-
-        'appointment_count':
-        appointments.count()
-
+        "appointments": appointments,
+        "appointment_count": appointments.count(),
     }
 
     return render(
         request,
-        'accounts/profile.html',
-        context
+        "accounts/profile.html",
+        context,
     )
-
+#updated
 def about(request):
 
-    brokers = get(
-    "/api/brokers/",
-    auth=False
-    )
+    brokers = BrokerService.get_all()
 
     return render(
         request,
@@ -361,68 +288,78 @@ class PropertyListAPIView(APIView):
 
     def get(self, request):
 
-        properties = Property.objects.filter(
-            publish_status="Published"
+        properties = PropertyService.search(
+
+            search=request.GET.get("search"),
+
+            city=request.GET.get("city"),
+
+            property_type=request.GET.get("property_type"),
+
         )
 
-        search = request.GET.get("search")
-        city = request.GET.get("city")
-        property_type = request.GET.get("property_type")
-
-        if search:
-            properties = properties.filter(
-                title__icontains=search
-            )
-
-        if city:
-            properties = properties.filter(
-                city__icontains=city
-            )
-
-        if property_type:
-            properties = properties.filter(
-                property_type=property_type
-            )
-
         serializer = PropertySerializer(
+
             properties,
+
             many=True,
-            context={"request": request}
+
+            context={
+                "request": request
+            }
+
         )
 
         return Response(serializer.data)
+
     def post(self, request):
 
-        serializer = PropertySerializer(
-        data=request.data,
-        context={"request": request}
-        )
+        try:
 
-        if serializer.is_valid():
+            property = PropertyService.create(
 
-            serializer.save()
+                request.data,
 
-            return Response(
-            serializer.data,
-            status=201
+                request
+
             )
 
-        return Response(
-        serializer.errors,
-        status=400
-         )
-    
+            return Response(
+
+                PropertySerializer(
+
+                    property,
+
+                    context={
+                        "request": request
+                    }
+
+                ).data,
+
+                status=status.HTTP_201_CREATED,
+
+            )
+
+        except Exception as e:
+
+            return Response(
+
+                {
+
+                    "error": str(e)
+
+                },
+
+                status=status.HTTP_400_BAD_REQUEST,
+
+            )
 class PropertyDetailAPIView(APIView):
 
     permission_classes = [AllowAny]
 
     def get(self, request, pk):
 
-        property = get_object_or_404(
-            Property,
-            pk=pk,
-            publish_status="Published"
-        )
+        property = PropertyService.get_by_id(pk)
 
         serializer = PropertyDetailSerializer(
             property,
@@ -437,7 +374,7 @@ class BrokerListAPIView(APIView):
 
     def get(self, request):
 
-        brokers = Broker.objects.all()
+        brokers = BrokerService.get_all()
 
         serializer = BrokerSerializer(
             brokers,
@@ -454,23 +391,36 @@ class ConsultationAPIView(APIView):
     def post(self, request):
 
         serializer = ConsultationSerializer(
-            data=request.data,
-            context={"request": request}
+
+        data=request.data,
+
+        context={
+            "request": request
+        }
+
         )
 
-        if serializer.is_valid():
+        serializer.is_valid(
+        raise_exception=True
+        )
 
-            serializer.save()
-
-            return Response(
-                serializer.data,
-                status=201
-            )
+        consultation = serializer.save()
 
         return Response(
-            serializer.errors,
-            status=400
-        )
+
+        ConsultationSerializer(
+
+            consultation,
+
+            context={
+                "request": request
+            }
+
+        ).data,
+
+        status=status.HTTP_201_CREATED,
+
+    )
 class AppointmentAPIView(APIView):
 
     permission_classes = [IsAuthenticated]
