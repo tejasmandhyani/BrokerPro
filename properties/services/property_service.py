@@ -51,19 +51,41 @@ class PropertyService:
         queryset = PropertyService.get_all()
 
         if search:
+
             queryset = queryset.filter(
-                Q(title__icontains=search) |
-                Q(description__icontains=search)
+
+            Q(title__icontains=search) |
+
+            Q(description__icontains=search) |
+
+            Q(city__icontains=search) |
+
+            Q(location__icontains=search) |
+
+            Q(property_type__icontains=search)
+
             )
 
         if city:
+
             queryset = queryset.filter(
-                city__icontains=city
+            city__icontains=city
             )
 
         if property_type:
+
             queryset = queryset.filter(
-                property_type=property_type
+            property_type=property_type
             )
 
         return queryset
+    @staticmethod
+    def get_all_cities():
+
+        return (
+        Property.objects
+        .filter(publish_status="Published")
+        .values_list("city", flat=True)
+        .distinct()
+        .order_by("city")
+        )

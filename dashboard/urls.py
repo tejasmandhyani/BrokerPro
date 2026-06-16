@@ -129,6 +129,11 @@ urlpatterns = [
     name='property_versions'
     ),
     path(
+    "properties/versions/<int:id>/details/",
+    views.property_version_detail,
+    name="property_version_detail",
+    ),
+    path(
     'rollback/<int:version_id>/',
     views.rollback_property,
     name='rollback_property'
@@ -149,4 +154,5 @@ urlpatterns = [
     views.preview_property_detail,
     name='preview_property_detail'
     ),
+
 ]

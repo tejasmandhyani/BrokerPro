@@ -36,11 +36,30 @@ Browse Properties
 
                     <div class="col-md-3 mb-2">
 
-                        <input type="text"
+                        <select
                         name="city"
-                        class="form-control"
-                        placeholder="City"
-                        value="{{ request.GET.city }}">
+                        class="form-select">
+
+                            <option value="">
+
+                                All Cities
+
+                            </option>
+
+                            {% for city in cities %}
+
+                            <option value="{{ city }}"
+                            {% if request.GET.city == city %}
+                            selected
+                            {% endif %}>
+
+                            {{ city }}
+
+                            </option>
+
+                            {% endfor %}
+
+                        </select>
 
                     </div>
 
@@ -107,11 +126,23 @@ Browse Properties
 
         <div class="col-lg-4 col-md-6 mb-4">
 
-            <div class="card property-card shadow h-100">
+            {% if preview_mode %}
+                    {% url 'preview_property_detail' property.id as property_url %}
+            {% else %}
+                    {% url 'property_detail' property.id as property_url %}
+            {% endif %}
+
+
+            <div class="card property-card shadow h-100"
+                style="cursor:pointer;"
+                onclick="window.location='{{ property_url }}'">
+
 
                 {% if property.images.first %}
 
-                    <img src="{{ property.images.first.image.url }}">
+                    <img src="{{ property.images.first.image.url }}"
+                    class="card-img-top"
+                    alt="{{ property.title }}">
 
                 {% endif %}
 
@@ -185,27 +216,15 @@ Browse Properties
 
                 <div class="card-footer bg-white border-0">
 
-                {% if preview_mode %}
-
-                <a href="{% url 'preview_property_detail' property.id %}"
-                class="btn btn-custom w-100">
+                <a href="{{ property_url }}"
+                class="btn btn-custom w-100"
+                onclick="event.stopPropagation();">
 
                 View Details
 
                 </a>
 
-                {% else %}
-
-                <a href="{% url 'property_detail' property.id %}"
-                 class="btn btn-custom w-100">
-
-                 View Details
-
-                </a>
-
-                {% endif %}
-
-            </div>
+                </div>
 
             </div>
 

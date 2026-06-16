@@ -71,10 +71,17 @@
 
     <td>
 
-        <a href="{% url 'rollback_property' version.id %}"
-           class="btn btn-danger btn-sm">
+        <a href="{% url 'property_version_detail' version.id %}"
+        class="btn btn-primary btn-sm">
 
-            Rollback
+        View Changes
+
+        </a>
+
+        <a href="{% url 'rollback_property' version.id %}"
+        class="btn btn-danger btn-sm">
+
+        Rollback
 
         </a>
 

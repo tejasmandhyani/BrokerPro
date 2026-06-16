@@ -139,12 +139,17 @@ class ConsultationSerializer(serializers.ModelSerializer):
             "phone",
             "broker",
             "budget",
-            "requirements"
+            "requirements",
+            "user",
         ]
 
-    def create(self, validated_data):
+        extra_kwargs = {
+            "user": {
+                "required": False
+            }
+        }
 
-        validated_data["user"] = self.context["request"].user
+    def create(self, validated_data):
 
         return ConsultationLead.objects.create(
             **validated_data

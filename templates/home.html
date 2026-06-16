@@ -51,7 +51,15 @@ Home
 
             <div class="col-lg-4 col-md-6 mb-4">
 
-                <div class="card property-card shadow h-100">
+                {% if preview_mode %}
+                    {% url 'preview_property_detail' property.id as property_url %}
+                {% else %}
+                    {% url 'property_detail' property.id as property_url %}
+                {% endif %}
+
+                <div class="card property-card shadow h-100"
+                style="cursor:pointer;"
+                onclick="window.location='{{ property_url }}'">
 
                     {% if property.images.first %}
                         <img src="{{ property.images.first.image.url }}"
@@ -104,22 +112,24 @@ Home
                         {% if preview_mode %}
 
                         <a href="{% url 'preview_property_detail' property.id %}"
-                         class="btn btn-custom w-100">
+                        class="btn btn-custom w-100"
+                        onclick="event.stopPropagation();">
 
-                             View Details
+                        View Details
 
                         </a>
 
                         {% else %}
 
                         <a href="{% url 'property_detail' property.id %}"
-                        class="btn btn-custom w-100">
+                        class="btn btn-custom w-100"
+                        onclick="event.stopPropagation();">
 
-                         View Details
+                        View Details
 
                         </a>
 
-                    {% endif %}
+                        {% endif %}
 
                     </div>
 
@@ -210,8 +220,17 @@ Home
             {% for property in latest_properties %}
 
             <div class="col-lg-4 col-md-6 mb-4">
+                {% if preview_mode %}
+                    {% url 'preview_property_detail' property.id as property_url %}
+                {% else %}
+                    {% url 'property_detail' property.id as property_url %}
+                {% endif %}
 
-                <div class="card property-card shadow h-100">
+
+                <div class="card property-card shadow h-100"
+                style="cursor:pointer;"
+                onclick="window.location='{{ property_url }}'">
+
 
                     {% if property.images.first %}
                         <img src="{{ property.images.first.image.url }}"
@@ -264,16 +283,18 @@ Home
                         {% if preview_mode %}
 
                         <a href="{% url 'preview_property_detail' property.id %}"
-                            class="btn btn-custom w-100">
+                        class="btn btn-custom w-100"
+                        onclick="event.stopPropagation();">
 
-                             View Details
+                        View Details
 
                         </a>
 
                         {% else %}
 
                         <a href="{% url 'property_detail' property.id %}"
-                        class="btn btn-custom w-100">
+                        class="btn btn-custom w-100"
+                        onclick="event.stopPropagation();">
 
                         View Details
 

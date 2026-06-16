@@ -105,7 +105,7 @@ from .models import Broker
 from properties.models import CustomerProfile
 
 #updated with new service 
-@login_required(login_url="login")
+
 def consultation(request):
 
     brokers, broker = BrokerService.get_all_with_first()
@@ -163,17 +163,19 @@ def property_list(request):
 
     return render(
 
-        request,
+    request,
 
-        "property/browse_properties.html",
+    "property/browse_properties.html",
 
-        {
+    {
 
-            "properties": properties
+        "properties": properties,
 
-        }
+        "cities": PropertyService.get_all_cities(),
 
-    )
+    }
+
+)
 #register - view
 def register(request):
 

@@ -242,9 +242,11 @@ class PropertyVersion(models.Model):
 class ConsultationLead(models.Model):
 
     user = models.ForeignKey(
-        User,
-        on_delete=models.CASCADE
-    )
+    User,
+    on_delete=models.CASCADE,
+    null=True,
+    blank=True
+)
 
     broker = models.ForeignKey(
         Broker,

@@ -509,6 +509,32 @@ def property_versions(request, id):
             "versions": versions,
         }
     )
+
+@login_required(login_url="broker_login")
+@staff_member_required
+def property_version_detail(request, id):
+
+    version = get_object_or_404(
+        PropertyVersion,
+        id=id
+    )
+
+    property = version.property
+
+    changes = DashboardPropertyService.compare_version(
+        property,
+        version
+    )
+
+    return render(
+        request,
+        "dashboard/property_version_detail.html",
+        {
+            "property": property,
+            "version": version,
+            "changes": changes,
+        },
+    )
 @login_required(login_url="broker_login")
 @staff_member_required
 def rollback_property(request, property_id, version_id):

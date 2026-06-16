@@ -208,4 +208,85 @@ class DashboardPropertyService:
     def delete_video(video):
 
         video.delete()
-    
+
+    @staticmethod
+    def compare_version(property, version):
+
+        fields = [
+
+            ("Title", "title"),
+
+            ("City", "city"),
+
+            ("Location", "location"),
+
+            ("Property Type", "property_type"),
+
+            ("Status", "status"),
+
+            ("Publish Status", "publish_status"),
+
+            ("Price", "price"),
+
+            ("Bedrooms", "bedrooms"),
+
+            ("Bathrooms", "bathrooms"),
+
+            ("Area (sqft)", "area_sqft"),
+
+            ("Featured", "featured"),
+
+            ("Description", "description"),
+
+        ]
+
+        changes = []
+
+        for label, field in fields:
+
+            old = getattr(version, field)
+
+            new = getattr(property, field)
+
+        # Format boolean values
+            if field == "featured":
+
+                old = "Yes" if old else "No"
+
+                new = "Yes" if new else "No"
+
+        # Format publish status
+            elif field == "publish_status":
+
+                old = old.title()
+
+                new = new.title()
+
+        # Format prices
+            elif field == "price":
+
+                old = f"₹ {old:,.0f}"
+
+                new = f"₹ {new:,.0f}"
+
+        # Format area
+            elif field == "area_sqft":
+
+                old = f"{old} sqft"
+
+                new = f"{new} sqft"
+
+        # Show only changed fields
+            if old != new:
+
+                changes.append({
+
+                "field": label,
+
+                "old": old,
+
+                "new": new,
+
+            })
+
+        return changes

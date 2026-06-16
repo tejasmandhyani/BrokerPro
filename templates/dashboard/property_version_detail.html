@@ -1,0 +1,135 @@
+{% extends 'dashboard/base_dashboard.html' %}
+
+{% block title %}
+Version Comparison
+{% endblock %}
+
+{% block content %}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+
+    <div>
+
+        <h2 class="fw-bold">
+
+            Version Comparison
+
+        </h2>
+
+        <p class="text-muted mb-0">
+
+            Comparing the selected version with the current property.
+
+        </p>
+
+    </div>
+
+    <div>
+
+        <a href="{% url 'property_versions' property.id %}"
+           class="btn btn-secondary">
+
+            ← Back
+
+        </a>
+
+        <a href="{% url 'rollback_property' version.id %}"
+           class="btn btn-danger">
+
+            Rollback
+
+        </a>
+
+    </div>
+
+</div>
+
+{% if changes %}
+
+<div class="row">
+
+{% for change in changes %}
+
+<div class="col-lg-6 mb-4">
+
+    <div class="card shadow border-0 h-100">
+
+        <div class="card-header bg-dark text-white">
+
+            <strong>
+
+                {{ change.field }}
+
+            </strong>
+
+        </div>
+
+        <div class="card-body">
+
+            <div class="row">
+
+                <div class="col-5">
+
+                    <small class="text-muted">
+
+                        Previous
+
+                    </small>
+
+                    <div class="mt-2">
+
+                        {{ change.old }}
+
+                    </div>
+
+                </div>
+
+                <div class="col-2 text-center">
+
+                    <div class="fs-2 text-primary">
+
+                        →
+
+                    </div>
+
+                </div>
+
+                <div class="col-5">
+
+                    <small class="text-muted">
+
+                        Current
+
+                    </small>
+
+                    <div class="mt-2 fw-bold text-success">
+
+                        {{ change.new }}
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endfor %}
+
+</div>
+
+{% else %}
+
+<div class="alert alert-success">
+
+    No differences found between this version and the current property.
+
+</div>
+
+{% endif %}
+
+{% endblock %}

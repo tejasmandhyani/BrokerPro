@@ -10,9 +10,17 @@ class ConsultationForm(forms.ModelForm):
         model = ConsultationLead
 
         fields = [
-            
-            'budget',
-            'requirements'
+
+            "customer_name",
+
+            "email",
+
+            "phone",
+
+            "budget",
+
+            "requirements",
+
         ]
 
 class CustomerRegistrationForm(UserCreationForm):
