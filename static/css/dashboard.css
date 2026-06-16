@@ -236,6 +236,13 @@ td .btn{
 
     display:block;
 }
+.action-btn{
+
+    min-width:110px;
+
+    text-align:center;
+
+}
 
 /* =====================================
    MOBILE

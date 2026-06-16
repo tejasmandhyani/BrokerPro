@@ -24,7 +24,7 @@ Browse Properties
 
                 <div class="row">
 
-                    <div class="col-md-4 mb-2">
+                    <div class="col-lg-4 col-md-6 mb-2">
 
                         <input type="text"
                         name="search"
@@ -34,7 +34,7 @@ Browse Properties
 
                     </div>
 
-                    <div class="col-md-3 mb-2">
+                    <div class="col-lg-2 col-md-6 mb-2">
 
                         <select
                         name="city"
@@ -63,7 +63,7 @@ Browse Properties
 
                     </div>
 
-                    <div class="col-md-3 mb-2">
+                    <div class="col-lg-2 col-md-6 mb-2">
 
                     <select name="property_type"
                             class="form-control">
@@ -94,19 +94,24 @@ Browse Properties
 
                     </div>
 
-                    <div class="col-md-2">
+                    <div class="col-lg-2 col-md-6 mb-2">
 
-                        <button class="btn btn-primary w-100">
+                    <button class="btn btn-primary w-100 h-100">
 
-                            Search
+                    Search
 
-                        </button>
-                        <a href="{% url 'browse_properties' %}"
-                        class="btn btn-secondary w-100">
+                    </button>
 
-                         Clear
+                    </div>
 
-                        </a>
+                    <div class="col-lg-2 col-md-6 mb-2">
+
+                    <a href="{% url 'browse_properties' %}"
+                    class="btn btn-outline-secondary w-100 h-100 d-flex align-items-center justify-content-center">
+
+                    Clear
+
+                    </a>
 
                     </div>
 
