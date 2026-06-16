@@ -1,35 +1,98 @@
-/* ==========================
-   DASHBOARD LAYOUT
-========================== */
+/* =====================================
+   GLOBAL
+===================================== */
 
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
 
 body{
-    margin:0;
-    background:#f4f6f9;
     font-family:'Segoe UI',sans-serif;
+    background:#f4f6f9;
+    overflow-x:hidden;
 }
 
-.dashboard-container{
-    display:flex;
-    min-height:100vh;
-}
+/* =====================================
+   MOBILE NAVBAR
+===================================== */
 
+.mobile-navbar{
 
-/* SIDEBAR */
+    display:none;
 
-.dashboard-sidebar{
-
-    width:260px;
+    height:60px;
 
     background:#0d3b66;
 
-    color:white;
+    color:#fff;
+
+    align-items:center;
+
+    justify-content:space-between;
+
+    padding:0 20px;
 
     position:fixed;
 
+    top:0;
+
+    left:0;
+
+    width:100%;
+
+    z-index:1200;
+}
+
+.mobile-navbar h5{
+
+    margin:0;
+
+    font-weight:600;
+
+}
+
+.menu-toggle{
+
+    border:none;
+
+    background:none;
+
+    color:#fff;
+
+    font-size:30px;
+
+    cursor:pointer;
+}
+
+/* =====================================
+   SIDEBAR
+===================================== */
+
+.dashboard-sidebar{
+
+    position:fixed;
+
+    top:0;
+
+    left:0;
+
+    width:260px;
+
     height:100vh;
 
+    background:#0d3b66;
+
+    color:#fff;
+
     padding:25px;
+
+    overflow-y:auto;
+
+    transition:.3s;
+
+    z-index:1100;
 }
 
 .sidebar-logo{
@@ -46,12 +109,10 @@ body{
     list-style:none;
 
     padding:0;
+
+    margin:0;
 }
 
-.sidebar-menu .active{
-    background: rgba(255,255,255,0.2);
-    border-left: 4px solid #ffd166;
-}
 .sidebar-menu li{
 
     margin-bottom:10px;
@@ -77,18 +138,31 @@ body{
     background:rgba(255,255,255,.15);
 }
 
-/* CONTENT */
+.sidebar-menu .active{
+
+    background:rgba(255,255,255,.20);
+
+    border-left:4px solid #ffd166;
+}
+
+/* =====================================
+   CONTENT
+===================================== */
 
 .dashboard-content{
 
     margin-left:260px;
 
-    width:100%;
+    padding:35px;
 
-    padding:40px;
+    min-height:100vh;
+
+    overflow-x:auto;
 }
 
-/* CARDS */
+/* =====================================
+   CARDS
+===================================== */
 
 .dashboard-card{
 
@@ -101,104 +175,143 @@ body{
 
 .dashboard-card:hover{
 
-    transform:translateY(-5px);
+    transform:translateY(-4px);
 }
-/* ================================
-   Dashboard Alerts
-================================ */
 
-#dashboard-messages{
+/* =====================================
+   TABLES
+===================================== */
+
+.table-responsive{
+
+    width:100%;
+
+    overflow-x:auto;
+
+    overflow-y:hidden;
+
+    -webkit-overflow-scrolling:touch;
+}
+
+.table{
+
+    margin-bottom:0;
+
+    white-space:nowrap;
+}
+
+.table td,
+.table th{
+
+    vertical-align:middle;
+}
+
+/* =====================================
+   BUTTON GROUPS
+===================================== */
+
+td .btn{
+
+    margin:2px;
+}
+
+/* =====================================
+   OVERLAY
+===================================== */
+
+.sidebar-overlay{
+
     position:fixed;
-    top:90px;
-    right:20px;
-    z-index:9999;
+
+    inset:0;
+
+    background:rgba(0,0,0,.45);
+
+    display:none;
+
+    z-index:1050;
 }
 
-.dashboard-alert{
+.sidebar-overlay.show{
 
-    min-width:330px;
-
-    margin-bottom:12px;
-
-    padding:15px 20px;
-
-    border-radius:10px;
-
-    font-weight:500;
-
-    box-shadow:0 8px 20px rgba(0,0,0,.15);
-
-    animation:slideIn .4s ease;
+    display:block;
 }
 
-.dashboard-alert-success{
+/* =====================================
+   MOBILE
+===================================== */
 
-    background:#d1e7dd;
+@media(max-width:991px){
 
-    color:#0f5132;
-}
+    .mobile-navbar{
 
-.dashboard-alert-danger{
-
-    background:#f8d7da;
-
-    color:#842029;
-}
-
-.dashboard-alert-warning{
-
-    background:#fff3cd;
-
-    color:#664d03;
-}
-
-.dashboard-alert-info{
-
-    background:#cff4fc;
-
-    color:#055160;
-}
-
-@keyframes slideIn{
-
-    from{
-
-        opacity:0;
-
-        transform:translateX(80px);
-
+        display:flex;
     }
-
-    to{
-
-        opacity:1;
-
-        transform:translateX(0);
-
-    }
-
-}
-
-/* MOBILE */
-
-@media(max-width:768px){
 
     .dashboard-sidebar{
 
-        position:relative;
+        left:-270px;
 
-        width:100%;
+        width:260px;
 
-        height:auto;
+        top:60px;
+
+        height:calc(100vh - 60px);
+    }
+
+    .dashboard-sidebar.open{
+
+        left:0;
     }
 
     .dashboard-content{
 
         margin-left:0;
+
+        margin-top:60px;
+
+        padding:20px;
     }
 
-    .dashboard-container{
+}
 
-        flex-direction:column;
+/* =====================================
+   EXTRA SMALL
+===================================== */
+
+@media(max-width:768px){
+
+    .dashboard-content{
+
+        padding:15px;
     }
+
+    .dashboard-card{
+
+        margin-bottom:15px;
+    }
+
+    .table{
+
+        min-width:900px;
+    }
+
+}
+
+/* =====================================
+   VERY SMALL
+===================================== */
+
+@media(max-width:576px){
+
+    .dashboard-content{
+
+        padding:12px;
+    }
+
+    .mobile-navbar{
+
+        padding:0 15px;
+    }
+
 }

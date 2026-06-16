@@ -1,5 +1,4 @@
 {% load static %}
-
 <!DOCTYPE html>
 <html lang="en">
 
@@ -22,172 +21,266 @@
           rel="stylesheet">
 
     <link rel="stylesheet"
+          href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+    <link rel="stylesheet"
           href="{% static 'css/dashboard.css' %}">
 
 </head>
 
 <body>
 
-<div class="dashboard-container">
+<!-- MOBILE NAVBAR -->
 
+<nav class="mobile-navbar">
+
+    <button class="menu-toggle"
+            id="menuToggle">
+
+        <i class="bi bi-list"></i>
+
+    </button>
+
+    <h5>
+
+        BrokerPro CRM
+
+    </h5>
+
+</nav>
+
+<div class="sidebar-overlay"
+     id="sidebarOverlay">
+
+</div>
+
+
+<div class="dashboard-container">
 
     <!-- SIDEBAR -->
 
-    <div class="dashboard-sidebar">
+    <aside class="dashboard-sidebar"
+           id="dashboardSidebar">
 
         <h2 class="sidebar-logo">
+
             BrokerPro CRM
+
         </h2>
 
         <hr>
+
         <div class="text-center mb-4">
 
-                 <small class="text-light">
+            <small class="text-light">
 
-                                Logged in as
+                Logged in as
 
-                        <br>
+                <br>
 
-                        <strong>
-                             {{ request.user.username }}
-                         </strong>
+                <strong>
 
-                </small>
+                    {{ request.user.username }}
+
+                </strong>
+
+            </small>
 
         </div>
 
         <ul class="sidebar-menu">
 
             <li>
-                <a href="/dashboard/" class="{% if request.resolver_match.url_name == 'dashboard_home' %}active{% endif %}">
+
+                <a href="/dashboard/"
+                   class="{% if request.resolver_match.url_name == 'dashboard_home' %}active{% endif %}">
+
                     Dashboard
+
                 </a>
+
             </li>
 
             <li>
-                <a href="/dashboard/properties/" class="{% if 'property' in request.resolver_match.url_name %}active{% endif %}">
+
+                <a href="/dashboard/properties/"
+                   class="{% if 'property' in request.resolver_match.url_name %}active{% endif %}">
+
                     Properties
+
                 </a>
+
             </li>
 
             <li>
-                <a href="{% url 'appointment_list' %}" class="{% if 'appointment' in request.resolver_match.url_name %}active{% endif %}">
+
+                <a href="{% url 'appointment_list' %}"
+                   class="{% if 'appointment' in request.resolver_match.url_name %}active{% endif %}">
+
                     Appointments
 
-                        {% if pending_appointments > 0 %}
+                    {% if pending_appointments > 0 %}
 
-                        <span class="badge bg-danger">
+                    <span class="badge bg-danger">
 
-                            {{ pending_appointments }}
+                        {{ pending_appointments }}
 
-                        </span>
+                    </span>
 
-                        {% endif %}
+                    {% endif %}
+
                 </a>
+
             </li>
 
             <li>
-                <a href="{% url 'customer_list' %}" class="{% if 'customer' in request.resolver_match.url_name %}active{% endif %}">
+
+                <a href="{% url 'customer_list' %}"
+                   class="{% if 'customer' in request.resolver_match.url_name %}active{% endif %}">
+
                     Customers
+
                 </a>
+
             </li>
+
             <li>
 
                 <a href="{% url 'consultation_list' %}">
 
-                     Consultation Leads
+                    Consultation Leads
 
                 </a>
 
             </li>
-            <li class="nav-item">
 
-            <a href="{% url 'preview_home' %}"
-                 target="_blank"
-                class="nav-link">
+            <li>
 
-                 🌐 Preview Website
+                <a href="{% url 'preview_home' %}"
+                   target="_blank">
 
-            </a>
+                    🌐 Preview Website
+
+                </a>
 
             </li>
 
             <li>
+
                 <a href="/">
+
                     Back To Website
+
                 </a>
+
             </li>
 
             <li>
+
                 <a href="{% url 'broker_logout' %}">
+
                     Logout
+
                 </a>
+
             </li>
 
         </ul>
 
-    </div>
+    </aside>
 
     <!-- MAIN CONTENT -->
-     {% if messages %}
 
-    {% for message in messages %}
+    {% if messages %}
+
+        {% for message in messages %}
 
         <div class="success-alert"
              style="
-                position: fixed;
-                top: 100px;
-                right: 20px;
-                z-index: 9999;
-                min-width: 320px;
-                background: #d1e7dd;
-                color: #0f5132;
-                padding: 15px 20px;
-                border-radius: 10px;
-             ">
+                position:fixed;
+                top:100px;
+                right:20px;
+                z-index:9999;
+                min-width:320px;
+                background:#d1e7dd;
+                color:#0f5132;
+                padding:15px 20px;
+                border-radius:10px;">
 
             {{ message }}
 
         </div>
 
-    {% endfor %}
+        {% endfor %}
 
-{% endif %}
-    <div class="dashboard-content">
+    {% endif %}
+
+    <main class="dashboard-content">
 
         {% block content %}
         {% endblock %}
 
-    </div>
+    </main>
 
 </div>
+
 <script>
 
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener("DOMContentLoaded",function(){
 
-    setTimeout(function() {
+    /* Success Alert */
 
-        document.querySelectorAll('.success-alert')
-            .forEach(function(alertBox) {
+    setTimeout(function(){
 
-                alertBox.style.transition =
-                    "opacity 0.5s";
+        document.querySelectorAll(".success-alert")
+        .forEach(function(alert){
 
-                alertBox.style.opacity = "0";
+            alert.style.transition=".5s";
 
-                setTimeout(function() {
+            alert.style.opacity="0";
 
-                    alertBox.remove();
+            setTimeout(function(){
 
-                }, 500);
+                alert.remove();
 
-            });
+            },500);
 
-    }, 5000);
+        });
+
+    },5000);
+
+
+    /* Mobile Sidebar */
+
+    const sidebar=document.getElementById("dashboardSidebar");
+
+    const overlay=document.getElementById("sidebarOverlay");
+
+    const toggle=document.getElementById("menuToggle");
+
+
+    toggle.addEventListener("click",function(){
+
+        sidebar.classList.toggle("open");
+
+        overlay.classList.toggle("show");
+
+    });
+
+
+    overlay.addEventListener("click",function(){
+
+        sidebar.classList.remove("open");
+
+        overlay.classList.remove("show");
+
+    });
 
 });
 
 </script>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
 </body>
 
