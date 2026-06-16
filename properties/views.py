@@ -149,6 +149,8 @@ def consultation(request):
         },
     )
 #updated with new service 
+from .models import Property
+
 def property_list(request):
 
     properties = PropertyService.search(
@@ -161,21 +163,28 @@ def property_list(request):
 
     )
 
+    cities = (
+        Property.objects
+        .values_list("city", flat=True)
+        .distinct()
+        .order_by("city")
+    )
+
     return render(
 
-    request,
+        request,
 
-    "property/browse_properties.html",
+        "property/browse_properties.html",
 
-    {
+        {
 
-        "properties": properties,
+            "properties": properties,
 
-        "cities": PropertyService.get_all_cities(),
+            "cities": cities,
 
-    }
+        }
 
-)
+    )
 #register - view
 def register(request):
 
