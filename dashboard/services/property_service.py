@@ -210,7 +210,7 @@ class DashboardPropertyService:
         video.delete()
 
     @staticmethod
-    def compare_version(property, version):
+    def compare_version(compare_object, version):
 
         fields = [
 
@@ -238,15 +238,16 @@ class DashboardPropertyService:
 
             ("Description", "description"),
 
-        ]
+            ]
 
         changes = []
 
         for label, field in fields:
 
+
             old = getattr(version, field)
 
-            new = getattr(property, field)
+            new = getattr(compare_object, field)
 
         # Format boolean values
             if field == "featured":
@@ -287,6 +288,6 @@ class DashboardPropertyService:
 
                 "new": new,
 
-            })
+                })
 
         return changes

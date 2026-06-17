@@ -521,10 +521,29 @@ def property_version_detail(request, id):
 
     property = version.property
 
-    changes = DashboardPropertyService.compare_version(
-        property,
-        version
+    next_version = (
+        PropertyVersion.objects
+        .filter(
+            property=property,
+            created_at__gt=version.created_at
+        )
+        .order_by("created_at")
+        .first()
     )
+
+    if next_version:
+
+        changes = DashboardPropertyService.compare_version(
+            next_version,
+            version
+        )
+
+    else:
+
+        changes = DashboardPropertyService.compare_version(
+            property,
+            version
+        )
 
     return render(
         request,
@@ -537,17 +556,14 @@ def property_version_detail(request, id):
     )
 @login_required(login_url="broker_login")
 @staff_member_required
-def rollback_property(request, property_id, version_id):
-
-    property = DashboardPropertyService.get_by_id(
-        property_id
-    )
+def rollback_property(request, version_id):
 
     version = get_object_or_404(
         PropertyVersion,
-        id=version_id,
-        property=property
+        id=version_id
     )
+
+    property = version.property
 
     DashboardPropertyService.rollback(
         property,
@@ -561,7 +577,7 @@ def rollback_property(request, property_id, version_id):
 
     return redirect(
         "property_versions",
-        id=property.id
+        property.id
     )
 #preview
 @staff_member_required
